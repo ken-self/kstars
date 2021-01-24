@@ -3432,7 +3432,8 @@ void Align::solverFinished(double orientation, double ra, double dec, double pix
     alignCoord.EquatorialToHorizontal(KStarsData::Instance()->lst(), KStarsData::Instance()->geo()->lat());
 
     // Do not update diff if we are performing load & slew.
-    if (loadSlewState == IPS_IDLE)
+    // FIXME: Why not. Could be a useful indicator for the user that a large slew is imminent
+//    if (loadSlewState == IPS_IDLE)
     {
         pixScaleOut->setText(QString::number(pixscale, 'f', 2));
         calculateAlignTargetDiff();
@@ -6124,18 +6125,61 @@ void Align::calculateAlignTargetDiff()
     QString dRAText = QString("%1%2").arg((m_TargetDiffRA > 0 ? "+" : "-"), RADiff.toHMSString());
     QString dDEText = DEDiff.toDMSString(true);
 
-    m_TargetDiffTotal = sqrt(m_TargetDiffRA * m_TargetDiffRA + m_TargetDiffDE * m_TargetDiffDE);
+// FIXME: Use a great circle to calculate total difference: **look up AngularDistanceTo
+// diff = acos[ sin(d1).sin(d2) + cos(d1).cos(d2).cos(r2-r1) ]
+    dms d1 = telescopeCoord.dec();
+    dms d2 = alignCoord.dec();
+    dms r1 = telescopeCoord.ra();
+    dms r2 = alignCoord.ra();
+    m_TargetDiffTotal = acos( d1.sin()*d2.sin() + d1.cos()*d2.cos()*(r2 - r1).cos() )*3600 / dms::DegToRad ;
 
-    errOut->setText(QString("%1 arcsec. RA:%2 DE:%3").arg(
+// FIXME: Check if flipping (add 12h to RA) is closer overall
+// In that case the dec distance is twice the distance from the pole plus the raw dec difference.
+// And the RA is the difference after flipping
+    double flipDiff, d1norm;
+    dms r1flip, RArot, DErot;
+    dms pole(telescopeCoord.dec().Degrees() >= 0.0 ? 90.0 : -90.0);
+
+    r1flip = r1 + dms(180.0);
+// Dec distance from the pole
+    d1norm = pole.deltaAngle(telescopeCoord.dec()).Degrees();
+    flipDiff = acos( d1.sin()*d2.sin() + d1.cos()*d2.cos()*(r2 - r1flip).cos() )*3600 / dms::DegToRad;
+
+// Default values for RArot and DErot.
+    RArot = r2.deltaAngle(r1);
+    DErot = (alignCoord.dec().deltaAngle(telescopeCoord.dec()));
+    if( flipDiff < m_TargetDiffTotal)
+    {
+        RArot = r2.deltaAngle(r1flip);                                     // flipped RA rotational distance
+        DErot = dms(2 * d1norm + DErot.Degrees() );
+    }
+// FIXME: Report RA and Dec components in HMS/DMS of rotation needed
+// FIXME: Report RA as E/W smaller than 12H.
+    QString raEW("E");
+    if( RArot.Degrees() < 0 )
+    {
+        raEW = QString("W");
+        RArot.setD(abs(RArot.Degrees()));
+    }
+    errOut->setText(QString("%1 as: RA %2 %3, DE %4").arg(
                         QString::number(m_TargetDiffTotal, 'f', 0),
-                        QString::number(m_TargetDiffRA, 'f', 0),
-                        QString::number(m_TargetDiffDE, 'f', 0)));
+                        RArot.toHMSString(),
+                        raEW,
+                        DErot.toDMSString(true)
+                        ));
+
     if (m_TargetDiffTotal <= static_cast<double>(accuracySpin->value()))
         errOut->setStyleSheet("color:green");
     else if (m_TargetDiffTotal < 1.5 * accuracySpin->value())
         errOut->setStyleSheet("color:yellow");
     else
         errOut->setStyleSheet("color:red");
+
+// Don't mess with solver table when loading
+    if (loadSlewState == IPS_IDLE)
+    {
+        return;
+    }
 
     //This block of code will write the result into the solution table and plot it on the graph.
     int currentRow = solutionTable->rowCount() - 1;
