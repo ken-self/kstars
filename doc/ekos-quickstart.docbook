@@ -5,20 +5,28 @@
         <secondary>Ekos</secondary>
         <tertiary>Quick Start</tertiary>
     </indexterm>
-    <para>This quick start guide helps you to take your first image with Ekos.</para>
+    <para>This quick start guide helps you to take your first image with Ekos. Start by making sure you have met the
+        <link linkend="ekos-quick-start-prereq">pre-requisites</link>
+        . Then follow the step-by-step
+        <link linkend="ekos-quick-start-instruct">instructions</link>
+        .
+    </para>
     <sect3 id="ekos-quick-start-prereq">
         <title>Pre-requisites</title>
         <itemizedlist>
             <listitem>
                 <para>INDI is either installed on the same computer as KStars/Ekos or
                     <ulink url="https://indilib.org/download.html">installed</ulink>
-                    on a separate remote computer on the same network.
+                    on a separate, remote computer on the same network.
                 </para>
+            </listitem>
+            <listitem>
+                <para>If INDI is installed on a remote computer, you have the IP address readily available.</para>
             </listitem>
             <listitem>
                 <para>If INDI is on a remote computer, Indi Web Manager is
                     <ulink url="https://indilib.org/support/tutorials/162-indi-web-manager.html">installed</ulink>
-                    and running. This configuration is the easiest to use especially when the INDI Web manager is pre-installed with the OS.
+                    and running. This configuration is the easiest to use especially when the INDI Web manager is pre-installed.
                 </para>
                 <itemizedlist>
                     <para>If INDI Web Manager is not pre-installed you need to start it manually.</para>
@@ -26,7 +34,7 @@
                         <para>Connect to the INDI computer. Use SSH or VNC as appropriate and open a terminal.</para>
                     </listitem>
                     <listitem>
-                        <para>Type indi-web in the terminal to start the INDI web manager. Leave the terminal open so that indi-web keeps running</para>
+                        <para>Type indi-web in the terminal to start the INDI web manager. Leave the terminal open so that indi-web keeps running.</para>
                     </listitem>
                     <listitem>
                         <para>Longer term, set up INDI Web mMnager to
@@ -42,7 +50,7 @@
                 </para>
             </listitem>
             <listitem>
-                <para>System clocks on all compters have the correct time. It is important that your system clock has the correct time otherwise the mount slews to an unpredictable position and might collide with the pier/tripod.</para>
+                <para>System clocks on computers have the correct time. It is important that your system clock has the correct time, otherwise the mount slews to an unpredictable position and the telescope might collide with the pier/tripod.</para>
             </listitem>
             <listitem>
                 <para>Telescope (Optical tube) is attached to the mount</para>
@@ -60,16 +68,16 @@
                 <para>Telescope objective is uncovered.</para>
             </listitem>
             <listitem>
-                <para>Camera is roughly in focus. This is best done in daylight using a distant object (> 1km away).</para>
+                <para>Camera is roughly in focus. This is best done in daylight using a distant object (preferably more than 1 km away).</para>
             </listitem>
             <listitem>
-                <para>Mount is in the parked position. This is usually the default position for a mount when it is powered up. It enables the drivder to synchronize with teh mount position.</para>
+                <para>Mount is in the parked position. This is usually the default position for a mount when it is powered up. It enables the driver to synchronize with the mount position.</para>
             </listitem>
         </itemizedlist>
     </sect3>
     <sect3 id="ekos-quick-start-instruct">
         <title>Instructions</title>
-        <para>Follow these instructions to set up your equipment in Ekos for the first time and take your first image. This can be done either in daylight or at night. The image will probably be out of focus and either under-exposed (if taken at night), or over-exposed (if taken in daylight).</para>
+        <para>Follow these instructions to set up your equipment in Ekos for the first time and take your first image. This can be done either in daylight or at night. The image will probably be out of focus and either under-exposed (if taken at night), or over-exposed (if taken in daylight). Follow the instructions to capture an in-focus, properly exposed image and save it to a file.</para>
         <itemizedlist>
             <listitem>
                 <para>Launch KStars. Typically double-click the KStars icon on the desktop. The KStars window opens.</para>
@@ -153,9 +161,6 @@
                                 <itemizedlist>
                                     <para>Profile Wizard Connection</para>
                                     <listitem>
-                                        <para>Click Equipment is attached to this device if Ekos and INDI are on the same computer.</para>
-                                    </listitem>
-                                    <listitem>
                                         <para>Click Equipment is attached to this device if INDI is installed on this computer. Opens Profile wizard You Are Almost Done</para>
                                     </listitem>
                                     <listitem>
@@ -222,16 +227,22 @@
                                         <para>Click Unpark. The mount unparks and starts tracking</para>
                                     </listitem>
                                     <listitem>
-                                        <para>Choose Type: HA/DE. We will point the mount at a location defined by Hour Angle and Declination as these are fixed in relation to the earth for all users. Normally you would navigate using RA/DE of your target object.</para>
+                                        <para>Choose Type: HA/DE. For purposes of this quick start we point the mount at a location defined by Hour Angle and Declination, as these are fixed in relation to the earth for all users. Normally you navigate using RA/DE of your target object.</para>
                                     </listitem>
                                     <listitem>
-                                        <para>Type HA: 23:00:00 is 15 degree east of the meridian</para>
+                                        <para>Type HA: 23:00:00 is 15 degree east of the meridian.</para>
                                     </listitem>
                                     <listitem>
-                                        <para>Type DE: 00:00:00 is the celestial equator</para>
+                                        <para>Type DE: 00:00:00 is the celestial equator.</para>
                                     </listitem>
                                     <listitem>
-                                        <para>Click GOTO. Moves the mount 15 degrees East of the meridian at the celestial equator. It is important that your system clock has the correct time otherwise the mount moves to the wrong position and might collide with the pier/tripod.</para>
+                                        <para>Click GOTO. Moves the mount 15 degrees East of the meridian at the celestial equator. It is important that your system clock has the correct time otherwise the mount moves to the wrong position and the telescope might collide with the pier/tripod.</para>
+                                        <itemizedlist>
+                                            <para>Troubleshooting</para>
+                                            <listitem>
+                                                <para>If the mount slews unpredictably, click the Stop button on the toolbox.</para>
+                                            </listitem>
+                                        </itemizedlist>
                                     </listitem>
                                 </itemizedlist>
                             </listitem>
@@ -277,7 +288,7 @@
                         <para>Click Add Job. Add the settings to the sequence list</para>
                     </listitem>
                     <listitem>
-                        <para>Click Start. Run the sequence job. Progress counts down time remaining. Shows image in the Image Viewer and saves it to a file</para>
+                        <para>Click Start. Run the sequence job. Progress counts down the time remaining for the image capture. Shows image in the Image Viewer and saves it to a file</para>
                     </listitem>
                 </itemizedlist>
             </listitem>
