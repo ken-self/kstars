@@ -1,538 +1,1598 @@
 <sect2 id="ekos-capture">
-    <title>Capture</title>
+    <title>Capture Module</title>
     <indexterm>
         <primary>Tools</primary>
         <secondary>Ekos</secondary>
         <tertiary>Capture</tertiary>
-    </indexterm>    
-    <screenshot>
-        <screeninfo>
-            Ekos Capture
-        </screeninfo>
-        <mediaobject>
-            <imageobject>
-                <imagedata fileref="ekos_capture.png" format="PNG"/>
-            </imageobject>
-            <textobject>
-                <phrase>Ekos Capture</phrase>
-            </textobject>
-        </mediaobject>
-    </screenshot>
-    <para>
-        The CCD Module is your primary image and video acquisition module in Ekos. It enables you to capture single (Preview), multiple images (Sequence Queue), or record <ulink url="https://sites.google.com/site/astropipp/ser-player">SER</ulink> videos along with a selection of filter wheel and rotator, if available.
-    </para>
+    </indexterm>
+    <para>The Capture Module performs the main task that Ekos is designed for; namely the capture of astronomical images and videos. Ekos uses the settings provided by the module to govern the operation of the nominated camera, filter wheel and rotator devices to capture single images, multiple images, or video.</para>
+    <sect3 id="capture-quick-start">
+    <title>Capture Quick Start</title>
+    <para>Select Camera</para>
+    <para>Select FW</para>
+    <para>Click Preview</para>
+    <para>Expose counts down the time left for the exposure then the download time.</para>
+    <para>The FITS Viewer opens and shows the captured image when image download is complete</para>
+    </sect3>
+    <sect3 id="capture-key-concepts">
+        <title>Key Concepts</title>
+        <sect4 id="capture-key-concepts-sequence">
+            <title>Capture Sequences, Queues and Jobs</title>
+            <para>A Capture Sequence (Sequence) is a collection of property settings that govern the capture of images.</para>
+            <para>A Preview is a single image captured using the capture settings (except Number) and displayed with the image viewer. The image is not saved to file.</para>
+            <para>A Sequence Job (Job) is an automated activity that captures a number of images using the settings in a Sequence.</para>
+            <para>A Sequence Queue is a collection of any number of Sequences, that are arranged to run as Sequence Jobs in a specific order, one after the other. It is configured using the built-in editor of the Capture module and can be saved in a file for reuse. Starting the Sequence Queue runs all the Sequence Jobs in order. The Sequence Queue automatically starts the next Job after each one finishes. If a Job is aborted, it may be resumed again. Ekos can execute and resume a Sequence Queue over multiple nights if required.</para>
+            <important>
+                <para>
+                    <emphasis role="bold">Job Progress</emphasis>
+                    : Ekos can execute and resume a Sequence Queue over multiple nights if required. If
+                    <guilabel>Remember Job Progress</guilabel>
+                    option is enabled in
+                    <link linkend="ekos">Ekos Options</link>
+                    , Ekos scans the file system to count how many images are already completed and resumes the Sequence Job from where it was left off. If this default behavior is not desired, turn off
+                    <guilabel>Remember Job Progress</guilabel>
+                    under options.
+                </para>
+            </important>
+            <para>If your camera supports live video feed, then you can use the
+                <guibutton>Live Video</guibutton>
+                tool to start streaming. The Live video tool enables recording and subframing of the video stream.
+            </para>
+        </sect4>
+        <sect4 id="capture-key-concepts-cameras">
+            <title>Cameras</title>
+            <para>Two broad classes of camera are used with the capture module.</para>
+            <itemizedlist>
+                <listitem>
+                    <para>A DSLR (Digital Single Lens reflex) camera is normally used for terrestrial photography but is often also used in astrophotography. A DSLR usually takes color images.</para>
+                </listitem>
+                <listitem>
+                    <para>An astro camera is designed for astrophotography. Many have a set point cooler to aid noise reduction. Many take monochromatic images and are paired with a filter wheel to take images that are combined in post processing to produce colour images.</para>
+                </listitem>
+            </itemizedlist>
+            <para>The brightness of a captured image is determined by the exposure time and the camera gain, sometimes termed sensitivity. The gain of a DSLR camera is adjusted using what is commonly known as the ISO setting (short for ISO 12232). This is standardised across DSLR brands so that the image produced by one brand should be comparable to anotehr taken at the same expsoure and ISO setting. Astro cameras usually have a gain adjustment but the value is camera dependent. In addition, astro cameras also have an Offset or Bias setting which is normally measured in ADU. The Capture module allows setting of ISO for DSLR cameras, and Gain and Offset for those astro cameras that support them.</para>
+            <para>Many cameras offer additional properties that cannot be set with the standard controls in the module. Each camera is unique and may offer its own additional properties. It is often important to use some of these properties in a capture. This can be done with the INDI Control Panel but the settings apply immediately and remain until they are changed. The Custom Properties Tool provides for setting of non-standard properties in a Sequence that are automatically applied when the Sequence Job is run.</para>
+            <para>Many cameras, DSLR and astro, can capture video.</para>
+        </sect4>
+        <sect4 id="capture-key-concepts-filter">
+            <title>Filter Wheel</title>
+            <para>Filters that are not parafocal with each other require a specific relative focus offset in order to get them into proper focus. Ekos changes focus on a change of filter using the relative offsets of the current and next filter.</para>
+            <para>For example, if the current filter is
+                <emphasis>Red</emphasis>
+                and has an offset of -100 and then next filter is
+                <emphasis>Green</emphasis>
+                with an offset of +300, then Ekos moves the focuser out by +400 ticks. A positive focus offset indicates Focus Out and negative values indicate Focus In.
+            </para>
+            <para>Ekos can also perform an autofocus on change of filter. This can be done with either the next filter or the Lock Filter. For example, if the current filter is
+                <guilabel>Green</guilabel>
+                with a relative offset of +300 and the next filter is Hydrogen Alpha (HAlpha) with an offset of -1200 and a locked filter of Luminace with an offset of 0, then Ekos does the following:
+            </para>
+            <orderedlist>
+                <listitem>
+                    <para>Pause the capture Sequence.</para>
+                </listitem>
+                <listitem>
+                    <para>Change filter to the locked filter Luminosity and move the focuser in by 300 ticks from the Green filter position</para>
+                </listitem>
+                <listitem>
+                    <para>Auto Focus using the Luminosity filter</para>
+                </listitem>
+                <listitem>
+                    <para>Wait until Auto Focus is complete then change the filter to HAlpha and move the focuser in by 1200 ticks corresponding to the H-Alpha offset</para>
+                </listitem>
+                <listitem>
+                    <para>Resume the capture Sequence.</para>
+                </listitem>
+            </orderedlist>
+        </sect4>
+        <sect4 id="capture-key-concepts-calibration">
+            <title>Calibration</title>
+            <para>Calibration settings are used to automate the capture of Flat, Dark and Bias frames for unattended operation. While it is not strictly necessary, it is advisable to add the calibration frame Sequences after the light frame Sequences.</para>
+            <para>The duration of flat frames can be either manually supplied or automatically determined based on ADU calculations.</para>
+            <para>Capture module supports the uses of different light sources for flat frames and covers for dark and bias frames. At the start of each Sequence Job, Ekos prompts to perform required manual actions with a timeout countdown e.g. Cover the lens for a dark frame. The job can be manually cancelled before timeout. After a timeout period the job proceeds. Supported light sources and cover are:</para>
+            <itemizedlist>
+                <listitem>
+                    <para>Manually operated light source e.g. a light panel placed on top of the OTA pointed at the zenith</para>
+                </listitem>
+                <listitem>
+                    <para>Dust cover with builtin light source (e.g. FlipFlat). For dark and bias frames, Ekos closes the dust cap before proceeding. For flat frames, Ekos closes the dust cover and turns on the light source. If your camera is equipped with a mechanical shutter, then it is not necessary to close the dust cover unless to ensure no light at all passes through the optical tube.</para>
+                </listitem>
+                <listitem>
+                    <para>Dust cover with an external flat light source. For dark and bias frames, Ekos closes the dust cover before proceeding. For flat frames, Ekos opens the dust cover and turns on the light source. The external flat light source location is presumed to be in the parking position.</para>
+                </listitem>
+                <listitem>
+                    <para>Light panel fixed on the observatory wall. Ekos slews the mount to the panel location then captures the flat field frames. Ekos turns the light panel on and off if it is controllable.</para>
+                </listitem>
+            </itemizedlist>
+            <para>Capture module automates activities associated with calibration Sequences e.g.:</para>
+            <itemizedlist>
+                <listitem>
+                    <para>Park the mount and/or dome before starting the calibration Sequence Job</para>
+                </listitem>
+                <listitem>
+                    <para>Determine the exposure duration based on ADU value. Ekos captures some preview images to establish the ADU/exposure curve and calculates the required expsoure value. Another capture is taken and measured until a satisfactory ADU is achieved.</para>
+                </listitem>
+                <listitem>
+                    <para>Close the dust cover and, for flat frames, turn on the light source which may be external or built-in (e.g. FlipFlat)</para>
+                </listitem>
+                <listitem>
+                    <para>Slew the mount to a specific Altitude and Azimuth to point to a light source on the observatory wall and turn on the light source</para>
+                </listitem>
+            </itemizedlist>
+        </sect4>
+        <sect4 id="capture-key-concepts-rotator">
+            <title>Rotator</title>
+            <para>A Field Rotator is a device that allows a camera to be oriented for optimal framing of a target. The orientation of a rotator is expressed as the
+                <ulink url="https://en.wikipedia.org/wiki/Positionangle">Position Angle</ulink>
+                ; which is the direction of the frame Y-axis in degrees East of North, measured counter-clockwise from the North Celestial Pole. At a Position Angle of
+                <emphasis>zero</emphasis>
+                the frame Y-axis points
+                <emphasis>directly</emphasis>
+                at the NCP. At a Position Angle of 90 the frame X-axis points directly at the NCP. Check
+                <ulink url="http://www.srl.caltech.edu/NuSTARPublic/NuSTAROperationSite/file/NuSTAR-PA.pdf">examples</ulink>
+                .
+            </para>
+            <para>The rotator driver reports a raw angle which is not necessarily the same as the position angle. It may be reported in radians, tenths of degrees or ticks of the motor etc. To convert to degrees the raw angle is scaled with a
+                <emphasis>multiplier</emphasis>
+                . Also,the orientation of the rotator in the telescope means a raw angle of zero does not necessarily align with a position angle of zero. To convert to a position angle an
+                <emphasis>offset</emphasis>
+                in degrees is added to the scaled raw angle.
+            </para>
+            <para>To calibrate the Position Angle (PA), capture and solve an image in the
+                <link linkend="ekos-align">Ekos Align module</link>
+                . The Ekos Rotator tool permits direct control of the raw angle and also the PA. The offset and multiplier can be changed manually to synchronize the rotator's raw angle with the actual PA. Check
+                <guilabel>Sync FOV to PA</guilabel>
+                to rotate the current Field of View (FOV) indicator on the Sky Map with the PA value as you change it in the tool.
+            </para>
+            <para>Each capture job may be assigned a different rotator angle, but be aware that this causes guiding to abort as it loses track of the guide star when rotating. Therefore, for most Sequence Queues, the rotator angle is kept the same for all sequence jobs.</para>
+        </sect4>
+        <sect4 id="capture-key-concepts-files">
+            <title>Saving to File</title>
+            <para>DSLR camera images are saved in FITS format, or can be saved in
+                <guimenuitem>Native</guimenuitem>
+                format (e.g. RAW or JPEG).
+            </para>
+            <para>Astro camera images are saved to a FITS format image file.</para>
+            <para>Video captures are saved to a
+                <ulink url="https://sites.google.com/site/astropipp/ser-player">SER</ulink>
+                format video file.
+            </para>
+            <para>Ekos generates unique file names for captured images. The file settings in a Sequence govern the names of the image files created by a Sequence job, and where it saves them. Filenames are generated as a concatenation of optional elements separated by an underscore ("")):</para>
+            <itemizedlist>
+                <listitem>
+                    <para>&lt;Prefix&gt;: A prefix supplied by the user e.g. the object name</para>
+                </listitem>
+                <listitem>
+                    <para>&lt;Type of frame&gt;: The type of frame selected: Light, Dark, Flat or Bias</para>
+                </listitem>
+                <listitem>
+                    <para>&lt;Filter label&gt;: The label given for the filter wheel position in the filter wheel tool e.g. Luminance, Red, Green, Blue</para>
+                </listitem>
+                <listitem>
+                    <para>&lt;Duration&gt;: Exposure duration for the capture in seconds</para>
+                </listitem>
+                <listitem>
+                    <para>&lt;Timestamp&gt; The capture date and time for the image in ISO 8601 format e.g. 2021-01-26T22-07-47</para>
+                </listitem>
+                <listitem>
+                    <para>&lt;Counter&gt;: The counter for the frame within the sequence between 001 and 999.</para>
+                </listitem>
+            </itemizedlist>
+        </sect4>
+        <sect4 id="capture-key-concepts-scripts">
+            <title>Scripts</title>
+            <para>Specify
+                <emphasis>optional</emphasis>
+                scripts that run at the start and end of each sequence job and/or the start and end of each capture. The full path to an executable file containing a script is required. The script must return zero when successful to allow the Sequence job to continue. If a non-zero value is returned by the script, the Sequence job is aborted.
+            </para>
+        </sect4>
+    </sect3>
+    <sect3 id="capture-screenshot">
+        <title>Ekos Capture Screen Shot</title>
+        <screenshot>
+            <screeninfo>Ekos Capture</screeninfo>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="ekos_capture.png" format="PNG"/>
+                </imageobject>
+                <caption>
+                    <para>
+                        <phrase>Ekos Capture Module</phrase>
+                    </para>
+                </caption>
+            </mediaobject>
+        </screenshot>        <screenshot>
+            <screeninfo>Ekos Capture Limits</screeninfo>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="ekos_capture_limits.png" format="PNG"/>
+                </imageobject>
+                <caption>
+                    <para>
+                        <phrase>Ekos Capture Limits</phrase>
+                    </para>
+                </caption>
+            </mediaobject>
+        </screenshot>
+    </sect3>
     <sect3 id="capture-ccd-filter-wheel">
-        <title>CCD &amp; Filter Wheel Group</title>
-        <para>
-            Select the desired CCD/DSLR and Filter Wheel (if available) for capture. Set CCD temperature and filter settings.
-        </para>
+        <title>Camera &amp; Filter Wheel Group</title>
+        <para>Select Imaging Camera and Filter Wheel (if available) for a Sequence Queue or preview and set the capture properties for a single Sequence.</para>
         <itemizedlist>
             <listitem>
                 <para>
-                    <guilabel>CCD</guilabel>: Select the active CCD camera. If your camera has a guide head, you can select it from here as well.
+                    <guilabel>Camera</guilabel>
+                    : Select the camera. A guide head of a camera, if available, is listed as a separate camera from the imaging camera
+                </para>
+                <itemizedlist>
+                        <listitem>
+                            <para><guilabel>Button</guilabel>: Click to restart the camera driver</para>
+                        </listitem>
+                        <listitem>
+                            <para><guilabel>Button</guilabel>: Click to set all camera properties to their default values</para>
+                        </listitem>
+                </itemizedlist>
+            </listitem>
+            <listitem>
+                <para>
+                    <guilabel>FW</guilabel>
+                    : Select the Filter Wheel to use in the Sequence. A built-in filter wheel on a camera is listed with the same name as the camera.
                 </para>
             </listitem>
             <listitem>
                 <para>
-                    <guilabel>FW</guilabel>: Select the active Filter Wheel device. If your camera has a built-in filter wheel, the device would be the same as the camera.
+                    <guilabel>
+                        <inlinemediaobject>
+                            <imageobject>
+                                <imagedata fileref="view-filter.png" format="PNG"/>
+                            </imageobject>
+                        </inlinemediaobject>
+                        Button
+                    </guilabel>
+                    : Click to open the filter wheel settings tool
                 </para>
+                <itemizedlist>
+                    <para>
+                        <guilabel>Filter Wheel Settings tool</guilabel>
+                        : Set filter wheel properties for each filter wheel position. These apply to all Sequences
+                    </para>
+                    <listitem>
+                        <para>Settings for each filter wheel position</para>
+                        <itemizedlist>
+                            <listitem>
+                                <para>
+                                    <guilabel>Filter</guilabel>
+                                    : Type the label for the filter wheel position.
+                                </para>
+                            </listitem>
+                            <listitem>
+                                <para>
+                                    <guilabel>Exposure</guilabel>
+                                    : Type the exposure duration in seconds used when focusing with this filter. By default, it is set to 1 second.
+                                </para>
+                            </listitem>
+                            <listitem>
+                                <para>
+                                    <guilabel>Offset</guilabel>
+                                    : Type the relative focus offset for the filter wheel position.
+                                </para>
+                            </listitem>
+                            <listitem>
+                                <para>
+                                    <guilabel>Auto Focus</guilabel>
+                                    : Tick to auto focus when the filter wheel position is activated.
+                                </para>
+                            </listitem>
+                            <listitem>
+                                <para>
+                                    <guilabel>Lock Filter</guilabel>
+                                    : Select the filter to use when focusing this filter wheel position
+                                </para>
+                            </listitem>
+                            <listitem>
+                                <para>
+                                    <guilabel>Flat Focus Position</guilabel>
+                                    : Tick to auto focus when the filter wheel position is activated.
+                                </para>
+                            </listitem>
+                        </itemizedlist>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <guilabel>Capture flat frames...</guilabel>
+                            : Tick to set focus for flat frames at the same focus position as light frames for each filter wheel position.
+                        </para>
+                    </listitem>
+                </itemizedlist>
             </listitem>
             <listitem>
                 <para>
-                    <guilabel>Cooler</guilabel>: Toggle Cooler On/Off. Set the desired temperature, if your camera is equipped with a cooler. Check the option to force temperature setting before any capture. Capture process is only started after the measured temperature is within requested temperature tolerance. The <emphasis>default</emphasis> tolerance is 0.1 degrees Celsius but can be adjusted in <guilabel>Capture</guilabel> options under Ekos configuration.
+                    <guilabel>Cooler</guilabel>
+                    : Control the camera cooler status and temperature
                 </para>
+                <itemizedlist>
+                    <listitem>
+                        <para>
+                            <guilabel>On/Off</guilabel>
+                            : Click to manually toggle Cooler On or Off immediately
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <guilabel>Checkbox</guilabel>
+                            : Tick to pause capture until the specified cooler temperature is reached. Set the tolerance limit in Options > Ekos > Capture. The
+                            <emphasis>default</emphasis>
+                            tolerance is 0.1 degrees Celsius. This is a property of a Sequence
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <guilabel>T&deg;</guilabel>
+                            : Show current temperature of the camera in degrees C
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <guilabel>Text box</guilabel>
+                            : Type the required cooler temperature in degrees C
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <guilabel>Button</guilabel>
+                            : Click to set the required cooler temperature and turn cooler on immediately
+                        </para>
+                    </listitem>
+                </itemizedlist>
             </listitem>
         </itemizedlist>
     </sect3>
     <sect3 id="capture-settings">
         <title>Capture Settings</title>
+        <para>Set capture properties for an image preview for a Sequence in a Sequence Queue</para>
+        <itemizedlist>
+            <listitem>
+                <para>
+                    <guilabel>Exposure</guilabel>
+                    : Type the exposure duration in seconds.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    <guilabel>Filter</guilabel>
+                    : Select the filter wheel position.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    <guilabel>Count</guilabel>
+                    : Type the number of images to capture in the sequence
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    <guilabel>Delay</guilabel>
+                    : Type the delay in seconds between image captures.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    <guilabel>Type</guilabel>
+                    : Select the type of image frame. Options are
+                    <guimenuitem>Light</guimenuitem>
+                    ,
+                    <guimenuitem>Dark</guimenuitem>
+                    ,
+                    <guimenuitem>Bias</guimenuitem>
+                    , and
+                    <guimenuitem>Flat</guimenuitem>
+                    frames.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    <guilabel>ISO</guilabel>
+                    : Type the ISO value for a DSLR camera
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    <guilabel>Gain</guilabel>
+                    : Type the Gain value for an astro camera
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    <guilabel>Offset</guilabel>
+                    : Type the Offet value for an astro camera
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    <guilabel>Format</guilabel>
+                    : Select capture file format.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    <guilabel>Custom Properties</guilabel>
+                    : Click to open the Custom Properties tool.
+                </para>
+                <itemizedlist>
+                    <para>
+                        <guilabel>Custom Properties tool</guilabel>
+                        : Set custom camera properties for the Sequence
+                    </para>
+                    <listitem>
+                        <para>
+                            <guilabel>Available Properties</guilabel>
+                            : Select the custom property to add to the Sequence
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <guilabel>Job properties</guilabel>
+                            : Select a custom property to remove from the Sequence
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <guilabel>Add</guilabel>
+                            : Click to add the selected Additional Properties to the Sequence
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <guilabel>Remove</guilabel>
+                            : Click to remove the selected Job Properties from the Sequence
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <guilabel>Remove all</guilabel>
+                            : Click to remove all selected Job Properties from the Sequence
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <guilabel>Close</guilabel>
+                            : Click to close the custom properties tool
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <guilabel>Apply</guilabel>
+                            : Click to save the custom properties in the Sequence
+                        </para>
+                    </listitem>
+                </itemizedlist>
+            </listitem>
+            <listitem>
+                <para>
+                    <guilabel>Calibration</guilabel>
+                    : Click to open the Calibration settings tool
+                </para>
+                <itemizedlist>
+                    <para>Calibration settings tool: Settings for automated operation of calibration frame sequences</para>
+                    <listitem>
+                        <para>
+                            <guilabel>Flat Field Source</guilabel>
+                            : Choose the source for the flat frame. At the start of each Sequence Job, Ekos prompts to perform required manual actions with a timeout countdown e.g. Cover the lens for a dark frame. The job can be manually cancelled before timeout. After a timeout period the job proceeds.
+                            <itemizedlist>
+                                <listitem>
+                                    <para>
+                                        <guilabel>Manual</guilabel>
+                                        : Choose if the flat light source is manually operated.
+                                    </para>
+                                </listitem>
+                                <listitem>
+                                    <para>
+                                        <guilabel>Dust Cover with Built-In Flat Light</guilabel>
+                                        : Choose if using a dust cover with builtin light source (e.g. FlipFlat).
+                                    </para>
+                                </listitem>
+                                <listitem>
+                                    <para>
+                                        <guilabel>Dust Cover with External Flat Light</guilabel>
+                                        : Choose if using a dust cover and a separate, external light source.
+                                    </para>
+                                </listitem>
+                                <listitem>
+                                    <para>
+                                        <guilabel>Wall</guilabel>
+                                        : Choose if the Light source is a panel on the observatory wall.
+                                    </para>
+                                    <itemizedlist>
+                                        <listitem>
+                                            <para>
+                                                <guilabel>Alt</guilabel>
+                                                : Type the azimuth coordinate of the panel as ddd:mm:ss.s
+                                            </para>
+                                        </listitem>
+                                        <listitem>
+                                            <para>
+                                                <guilabel>Az</guilabel>
+                                                : Type the altitude coordinate of the panel as ddd:mm:ss.s
+                                            </para>
+                                        </listitem>
+                                    </itemizedlist>
+                                </listitem>
+                                <listitem>
+                                    <para>
+                                        <guilabel>Dawn/Dusk</guilabel>
+                                        : Currently unsupported.
+                                    </para>
+                                </listitem>
+                            </itemizedlist>
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <guilabel>Flat Field Duration</guilabel>
+                            Choose how to set flat field duration from:
+                        </para>
+                        <itemizedlist>
+                            <listitem>
+                                <para>
+                                    <guilabel>Manual</guilabel>
+                                    : Choose if duration is set in the Capture Settings.
+                                </para>
+                            </listitem>
+                            <listitem>
+                                <para>
+                                    <guilabel>ADU</guilabel>
+                                    : Chose when duration is variable until specified ADU is met.
+                                </para>
+                                <itemizedlist>
+                                    <listitem>
+                                        <para>
+                                            <guilabel>Text box</guilabel>
+                                            : Type the target ADU for the flat frame
+                                        </para>
+                                    </listitem>
+                                    <listitem>
+                                        <para>
+                                            <guilabel>Tolerance</guilabel>
+                                            : Type the variation allowed from the target ADU
+                                        </para>
+                                    </listitem>
+                                </itemizedlist>
+                            </listitem>
+                        </itemizedlist>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <guilabel>Park Mount</guilabel>
+                            Tick to Park the mount after the calibration job finishes
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <guilabel>Park Dome</guilabel>
+                            Tick to Park the dome after the calibration job finishes
+                        </para>
+                    </listitem>
+                </itemizedlist>
+            </listitem>
+            <listitem>
+                <para>
+                    <guilabel>Rotator tool</guilabel>
+                    : Click to open the Rotator settings tool.
+                </para>
+                <itemizedlist>
+                    <para>
+                        <guilabel>Rotator settings tool</guilabel>
+                        : Settings to automate operation of a rotator in a sequence
+                    </para>
+                    <listitem>
+                        <para>
+                            <guilabel>Target Position Angle group</guilabel>
+                            : Set the position angle to use in a capture Sequence
+                            <itemizedlist>
+                                <listitem>
+                                    <para>
+                                        <guilabel>PA</guilabel>
+                                        : Tick to set Position Angle before the start of capture
+                                    </para>
+                                </listitem>
+                                <listitem>
+                                    <para>
+                                        <guilabel>PA Value</guilabel>
+                                        : Type the Position Angle in degrees.
+                                    </para>
+                                </listitem>
+                                <listitem>
+                                    <para>
+                                        <guilabel>Sync FOV to PA</guilabel>
+                                        : Tick to set the Field of View in KStars to the target Position angle
+                                    </para>
+                                </listitem>
+                                <listitem>
+                                    <para>
+                                        <guilabel>Rotate After Meridian Flip</guilabel>
+                                        : Tick to rotate the camera 180 degrees after a meridian flip
+                                    </para>
+                                </listitem>
+                            </itemizedlist>
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <guilabel>Rotator Control group</guilabel>
+                            Manually control the rotator position by raw angle
+                        </para>
+                        <itemizedlist>
+                            <listitem>
+                                <para>
+                                    <guilabel>Angle</guilabel>
+                                    : Show the current raw angle of the rotator
+                                </para>
+                            </listitem>
+                            <listitem>
+                                <para>
+                                    <guilabel>Slider</guilabel>
+                                    : Slide to set the raw angle to move to
+                                </para>
+                            </listitem>
+                            <listitem>
+                                <para>
+                                    <guilabel>Text box</guilabel>
+                                    : Type the raw angle to move to
+                                </para>
+                            </listitem>
+                            <listitem>
+                                <para>
+                                    <guilabel>Set</guilabel>
+                                    : Click to move the rotator to the raw angle setting
+                                </para>
+                            </listitem>
+                        </itemizedlist>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <guilabel>Current Position Angle group</guilabel>
+                            Calculate position angle from raw angle as PA = RA * multiplier + offset
+                        </para>
+                        <itemizedlist>
+                            <listitem>
+                                <para>
+                                    <guilabel>Raw Angle</guilabel>
+                                    : Show the current raw angle of the rotator
+                                </para>
+                            </listitem>
+                            <listitem>
+                                <para>
+                                    <guilabel>Rotator Angle Multiplier</guilabel>
+                                    : Type the multiplier to apply to the raw angle
+                                </para>
+                            </listitem>
+                            <listitem>
+                                <para>
+                                    <guilabel>Rotator Angle offset</guilabel>
+                                    : Type the offset to add to the multiplied raw angle
+                                </para>
+                            </listitem>
+                            <listitem>
+                                <para>
+                                    <guilabel>Calculated position angle</guilabel>
+                                    : Show the calculated position angle of the rotator
+                                </para>
+                            </listitem>
+                            <listitem>
+                                <para>
+                                    <guilabel>Target Position Angle</guilabel>
+                                    : Type the position angle to move to
+                                </para>
+                            </listitem>
+                            <listitem>
+                                <para>
+                                    <guilabel>Set</guilabel>
+                                    : Click to move the rotator to the required position angle setting
+                                </para>
+                            </listitem>
+                        </itemizedlist>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <guilabel>Ok</guilabel>
+                            Tick to Park the dome after the calibration job finishes
+                        </para>
+                    </listitem>
+                </itemizedlist>
+            </listitem>
+            <listitem>
+                <para>
+                    <guilabel>Frame</guilabel>
+                    : Type left (X) and top (Y) coordinates of the subframe image capture.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    <guilabel>Size</guilabel>
+                    : Type the width (W), and height (H) of the subframe image capture.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    <guilabel>Reset</guilabel>
+                    : Click to reset Frame and Size to a full frame image capture.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    <guilabel>Binning</guilabel>
+                    : Type horizontal (X) and vertical (Y) binning.
+                </para>
+            </listitem>
+        </itemizedlist>
+    </sect3>
+    <sect3 id="capture-file-settings">
+        <title>File Settings</title>
+        <para>Settings that govern how Ekos generates unique file names for captured images and where it saves them.</para>
+        <itemizedlist>
+            <listitem>
+                <para>
+                    <guilabel>Prefix</guilabel>
+                    : Type the prefix for the captured image filename.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    <guilabel>Filter</guilabel>
+                    : Tick to append the filter label to the captured image filename.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    <guilabel>Duration</guilabel>
+                    : Tick to append the exposure duration to the captured image filename.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    <guilabel>TS</guilabel>
+                    : Tick to append the ISO 8601 timestamp to the captured image filename.
+                </para>
+            </listitem>
+        </itemizedlist>
+        <itemizedlist>
+            <listitem>
+                <para>
+                    <guilabel>Script Manager</guilabel>
+                    : Click to open the Script Manager tool.
+                </para>
+                <itemizedlist>
+                    <para>
+                        <guilabel>Script Manager tool</guilabel>
+                        : Popup for setting scripts to run at the start and end of a sequence.
+                    </para>
+                    <listitem>
+                        <para>
+                            <guilabel>Pre-job script</guilabel>
+                            : Type the full path to a an executable file containing the script to run at the start of each sequence job
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <guilabel>Pre-capture script</guilabel>
+                            : Type the full path to a an executable file containing the script to run at the start of each image capture
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <guilabel>Post-capture script</guilabel>
+                            : Type the full path to a an executable file containing the script to run at the end of each image capture
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <guilabel>Post-job script</guilabel>
+                            : Type the full path to a an executable file containing the script to run at the end of each sequence job
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <guilabel>Ok</guilabel>
+                            : Click to save the script paths in the Sequence and exit
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <guilabel>Cancel</guilabel>
+                            : Click to exit without saving changes
+                        </para>
+                    </listitem>
+                </itemizedlist>
+            </listitem>
+        </itemizedlist>
+        <itemizedlist>
+            <listitem>
+                <para>
+                    <guilabel>Directory</guilabel>
+                    : Type the directory path where images are saved on the computer where Ekos is running
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    <guilabel>Save</guilabel>
+                    : Select which computer(s) the captured images are saved on:
+                </para>
+                <itemizedlist>
+                    <listitem>
+                        <para>
+                            <guilabel>Locally</guilabel>
+                            : Captured images are saved only on the computer where ekos is running
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <guilabel>Remotely</guilabel>
+                            : Captured images are saved only on the computer where the camera is connected.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <guilabel>Both</guilabel>
+                            : Captured images are saved on both computers.
+                        </para>
+                    </listitem>
+                </itemizedlist>
+            </listitem>
+            <listitem>
+                <para>
+                    <guilabel>Remote</guilabel>
+                    : Type the directory path where images are saved on the computer where the camera is connected.
+                </para>
+            </listitem>
+        </itemizedlist>
+    </sect3>
+    <sect3 id="capture-limit-settings">
+        <title>Limit Settings</title>
+        <para>Limit settings are applied to the Sequence Queue. The same limits apply to all sequence jobs in the queue</para>
+        <itemizedlist>
+            <listitem>
+                <para>
+                    <guilabel>Guide Limits</guilabel>
+                    : Applicable if autoguiding is used
+                </para>
+                <itemizedlist>
+                    <listitem>
+                        <para>
+                            <guilabel>Guiding Start Limit</guilabel>
+                            : Pause the start of a capture until the guiding deviation is lower than the limit.
+                        </para>
+                        <itemizedlist>
+                            <listitem>
+                                <para>
+                                    <guilabel>Only start if...</guilabel>
+                                    : Tick to enable guiding start limit
+                                </para>
+                            </listitem>
+                            <listitem>
+                                <para>
+                                    <guilabel>arcsec</guilabel>
+                                    : Type the deviation limit in arc seconds
+                                </para>
+                            </listitem>
+                        </itemizedlist>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <guilabel>Guiding Abort Limit</guilabel>
+                            : Abort a Sequence Job if the guiding deviation is greater then the limit.
+                        </para>
+                        <itemizedlist>
+                            <listitem>
+                                <para>
+                                    <guilabel>Abort if...</guilabel>
+                                    : Tick to enable guiding abort limit.
+                                </para>
+                            </listitem>
+                            <listitem>
+                                <para>
+                                    <guilabel>arcsec</guilabel>
+                                    : Type the deviation limit in arc seconds
+                                </para>
+                            </listitem>
+                        </itemizedlist>
+                    </listitem>
+                </itemizedlist>
+            </listitem>
+            <listitem>
+                <para>
+                    <guilabel>Focus Limits</guilabel>
+                    : Require autofocus is enabled in the
+                    <link linkend="ekos-focus">focus module</link>
+                    and at least one autofocus operation was completed successfully in that module. If the autofocus operation initiated by a limit completes successfully, the sequence job resumes, otherwise, the job is aborted.
+                </para>
+                <itemizedlist>
+                    <listitem>
+                        <para>
+                            <guilabel>Autofocus if HFR &gt;</guilabel>
+                            : Tick to enable autofocus whenever the HFR, measured between captures, exceeds the limit
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <guilabel>pixels</guilabel>
+                            : Type the HFR limit in pixels
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <guilabel>Autofocus if &#x394; T&deg; &gt;</guilabel>
+                            : Tick to autofocus whenever the temperature change since the last autofocus exceeds the limit.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <guilabel>&deg;C</guilabel>
+                            : Type the maximum allowed temperature change in degreees Celsius before autofocusing
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <guilabel>Refocus every</guilabel>
+                            : Tick to autofocus after a period of time has elapsed.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <guilabel>minutes</guilabel>
+                            : Type the number of minutes that elapses between autofocus
+                        </para>
+                    </listitem>
+                </itemizedlist>
+            </listitem>
+        </itemizedlist>
+    </sect3>
+    <sect3 id="capture-sequence-queue">
+        <title>Sequence Queue group</title>
+        <itemizedlist>
+            <listitem>
+                <para>
+                    <guilabel>Sequence Queue Organiser</guilabel>
+                    : Organize Sequences in the Sequence Queue
+                </para>
+                <itemizedlist>
+                    <listitem>
+                        <para>
+                            <guilabel>Add or save job</guilabel>
+                            : Shows add or edit mode.
+                        </para>
+                        <itemizedlist>
+                            <listitem>
+                                <para>
+                                    <guilabel>Add mode</guilabel>
+                                    : A Sequence in the queue is not being edited. Click to add a Sequence to the end of the queue with the settings in the Camera and filter Wheel group
+                                </para>
+                            </listitem>
+                            <listitem>
+                                <para>
+                                    <guilabel>Edit mode</guilabel>
+                                    : A Sequence in the queue is being edited (a row was double clicked). Click to save the Sequence with the settings in the Camera and filter Wheel group.
+                                </para>
+                            </listitem>
+                        </itemizedlist>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <guilabel>Remove job</guilabel>
+                            : Remove the selected Sequence from the queue
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <guilabel>Move up</guilabel>
+                            : Click to Move the Sequence to run earlier in the queue
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <guilabel>Move down</guilabel>
+                            : Click to move the Sequence to run later in the queue
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <guilabel>Reset Status</guilabel>
+                            : Reset the status of all Sequences to Idle
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <guilabel>Select Observer</guilabel>
+                            : Click to Open the select observer tool
+                        </para>
+                        <itemizedlist>
+                            <para>
+                                <guilabel>Select Observer</guilabel>
+                                : Tool to select current observer to add to the Sequence Queue
+                            </para>
+                            <listitem>
+                                <para>
+                                    <guilabel>Select Current observer tool</guilabel>
+                                    : Select the current observer
+                                </para>
+                            </listitem>
+                            <listitem>
+                                <para>
+                                    <guilabel>Manage observers</guilabel>
+                                    : Click to Open the manage observers tool.
+                                </para>
+                                <itemizedlist>
+                                    <para>
+                                        <guilabel>Manage observers tool</guilabel>
+                                        : Tool to add and remove observers on the observers list.
+                                    </para>
+                                    <listitem>
+                                        <para>
+                                            <guilabel>Name</guilabel>
+                                            : Type the name of an observer to add to the observer list
+                                        </para>
+                                    </listitem>
+                                    <listitem>
+                                        <para>
+                                            <guilabel>Surname</guilabel>
+                                            : Type the surname of an observer to add to the observer list.
+                                        </para>
+                                    </listitem>
+                                    <listitem>
+                                        <para>
+                                            <guilabel>Contact</guilabel>
+                                            : Type the contact details of an observer to add to the observer list
+                                        </para>
+                                    </listitem>
+                                    <listitem>
+                                        <para>
+                                            <guilabel>Add</guilabel>
+                                            : Click to add an observer to the observer list
+                                        </para>
+                                    </listitem>
+                                    <listitem>
+                                        <para>
+                                            <guilabel>Remove</guilabel>
+                                            : Click to remove the selected observer from the observer list
+                                        </para>
+                                    </listitem>
+                                    <listitem>
+                                        <para>
+                                            <guilabel>Observer list</guilabel>
+                                            : Click a row to select an observer to remove from the list
+                                        </para>
+                                    </listitem>
+                                    <listitem>
+                                        <para>
+                                            <guilabel>Close</guilabel>
+                                            : Click to close the manage observers tool.
+                                        </para>
+                                    </listitem>
+                                </itemizedlist>
+                            </listitem>
+                        </itemizedlist>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <guilabel>Open Sequence Queue file</guilabel>
+                            : Open a file containing a Sequence Queue and load the details into the Sequence Queue editor to replace the current Sequence Queue.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <guilabel>Save Sequence Queue file</guilabel>
+                            : Save the Sequence Queue to the opened file, or create a new one with extension
+                            <filename role="extension">.esq</filename>
+                            (Ekos Sequence Queue).
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <guilabel>Save Sequence Queue file as...</guilabel>
+                            : Save the Sequence Queue to a different file.
+                        </para>
+                    </listitem>
+                </itemizedlist>
+            </listitem>
+            <listitem>
+                <para>
+                    <guilabel>Sequence Queue table</guilabel>
+                    : Collection of Sequences organized as a queue
+                </para>
+                <itemizedlist>
+                    <listitem>
+                        <para>
+                            <guilabel>Sequence row</guilabel>
+                            : Select or edit a Sequence
+                        </para>
+                        <itemizedlist>
+                            <listitem>
+                                <para>
+                                    <guilabel>Click</guilabel>
+                                    : To select a Sequence. The Sequence settings are loaded into the Camera and filter Wheel group
+                                </para>
+                            </listitem>
+                            <listitem>
+                                <para>
+                                    <guilabel>Double click</guilabel>
+                                    : To edit a Sequence. The Sequence settings are loaded into the Camera and filter Wheel group for editing. The Add button changes to a Save button.
+                                </para>
+                            </listitem>
+                        </itemizedlist>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <guilabel>Sequence Queue table empty space</guilabel>
+                            : Click anywhere on the empty space within the Sequence Queue table to cancel a Sequence edit.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <guilabel>Status</guilabel>
+                            : Status of the sequence job. Idle, In Progress, Completed, Aborted
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <guilabel>Filter</guilabel>
+                            : Filter selected for the Sequence
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <guilabel>Count</guilabel>
+                            : Number of images captured in the sequence job / number of images set for the Sequence
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <guilabel>Exp</guilabel>
+                            : Exposure time in seconds
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <guilabel>Type</guilabel>
+                            : Abort a Sequence Job if the guiding deviation is greater than the limit.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <guilabel>Bin</guilabel>
+                            : Binning setting. Horizontal x Vertical
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <guilabel>ISO/Gain</guilabel>
+                            : ISO or Gain setting for the Sequence
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <guilabel>Offset</guilabel>
+                            : Offset setting for the Sequence.
+                        </para>
+                    </listitem>
+                </itemizedlist>
+            </listitem>
+            <listitem>
+                <para>
+                    <guilabel>Run controls</guilabel>
+                    : Control the running of a Sequence or Sequence Queue
+                </para>
+                <itemizedlist>
+                    <listitem>
+                        <para>
+                            <guilabel>Preview</guilabel>
+                            : Click to Capture a single image using the settings in the Camera and filter Wheel group. Show the image in FITS viewer but but do not save to file
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <guilabel>Loop</guilabel>
+                            : Click to Continuously capture images using the settings in the Camera and filter Wheel group. Show images in the FITS viewer but do not save to file. Click Stop to end looping
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <guilabel>Record</guilabel>
+                            : Open the Live video tool to capture video
+                        </para>
+                        <itemizedlist>
+                            <para>
+                                <guilabel>Live video tool</guilabel>
+                                : Settings to Record video to file
+                            </para>
+                            <listitem>
+                                <para>
+                                    <guilabel>Start Recording</guilabel>
+                                    : Click to start capturing the video to file. Button changes to a stop button
+                                </para>
+                            </listitem>
+                            <listitem>
+                                <para>
+                                    <guilabel>Recording options tool</guilabel>
+                                    : Click to open recording options tool
+                                </para>
+                                <itemizedlist>
+                                    <listitem>
+                                        <para>
+                                            <guilabel>File name</guilabel>
+                                            : Type the name of the file to save
+                                        </para>
+                                    </listitem>
+                                    <listitem>
+                                        <para>
+                                            <guilabel>Directory</guilabel>
+                                            : Type the directory where the file is saved
+                                        </para>
+                                    </listitem>
+                                    <listitem>
+                                        <para>
+                                            <guilabel>Record options</guilabel>
+                                            : Choose when video recording stops
+                                        </para>
+                                        <itemizedlist>
+                                            <listitem>
+                                                <para>
+                                                    <guilabel>Until Stopped</guilabel>
+                                                    : Choose to record until the Stop button is clicked
+                                                </para>
+                                            </listitem>
+                                            <listitem>
+                                                <para>
+                                                    <guilabel>Duration</guilabel>
+                                                    : Choose to record for a given duration
+                                                </para>
+                                                <itemizedlist>
+                                                    <listitem>
+                                                        <para>
+                                                            <guilabel>Duration</guilabel>
+                                                            : Type the recording duration in seconds
+                                                        </para>
+                                                    </listitem>
+                                                </itemizedlist>
+                                            </listitem>
+                                            <listitem>
+                                                <para>
+                                                    <guilabel>Frames</guilabel>
+                                                    : Choose to record for a given number of frames
+                                                </para>
+                                                <itemizedlist>
+                                                    <listitem>
+                                                        <para>
+                                                            <guilabel>Frames</guilabel>
+                                                            : Type the number of frames to record
+                                                        </para>
+                                                    </listitem>
+                                                </itemizedlist>
+                                            </listitem>
+                                        </itemizedlist>
+                                    </listitem>
+                                    <listitem>
+                                        <para>
+                                            <guilabel>Close</guilabel>
+                                            : Apply the recording options and exit
+                                        </para>
+                                    </listitem>
+                                </itemizedlist>
+                            </listitem>
+                            <listitem>
+                                <para>
+                                    <guilabel>Reset frame</guilabel>
+                                    : Click to Reset to full frame
+                                </para>
+                            </listitem>
+                            <listitem>
+                                <para>
+                                    <guilabel>Toggle debayer</guilabel>
+                                    : Click to toggle debayering on/off
+                                </para>
+                            </listitem>
+                            <listitem>
+                                <para>
+                                    <guilabel>Video frame duration</guilabel>
+                                    : Type Exposure and frame duration
+                                </para>
+                            </listitem>
+                            <listitem>
+                                <para>
+                                    <guilabel>Apply FPS and restart</guilabel>
+                                    : Click to apply new frame rate and restart video capture
+                                </para>
+                            </listitem>
+                            <listitem>
+                                <para>
+                                    <guilabel>FPS</guilabel>
+                                    : Show current frame rate in frames per second
+                                </para>
+                            </listitem>
+                        </itemizedlist>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <guilabel>Start</guilabel>
+                            : Click to Start or restart the Sequence Queue
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <guilabel>Pause</guilabel>
+                            : Click to pause the Sequence Queue at completion fo the current image capture
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <guilabel>Stop</guilabel>
+                            : Click to stop the Sequence Queue immediately
+                        </para>
+                    </listitem>
+                </itemizedlist>
+            </listitem>
+        </itemizedlist>
+    </sect3>
+    <sect3 id="capture-fits-viewer">
+        <title>FITS Viewer</title>
+        <para>Captured images are displayed in &kstars; FITS Viewer tool, and also in the summary screen. Set options related to how the images are displayed in the viewer.</para>
+        <itemizedlist>
+            <listitem>
+                <para>
+                    <guilabel>Auto Dark</guilabel>
+                    : Click Auto Dark to automatically subtract a dark frame from a
+                    <guilabel>Preview</guilabel>
+                    image.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    <guilabel>Effects</guilabel>
+                    : Select an Image enhancement effect to apply to the
+                    <guilabel>Preview</guilabel>
+                    image.
+                </para>
+            </listitem>
+        </itemizedlist>
+    </sect3>
+    <sect3 id="capture-progress">
+        <title>Progress</title>
+        <para>Monitor progress of Sequence Job</para>
+        <itemizedlist>
+            <listitem>
+                <para>
+                    <guilabel>Expose</guilabel>
+                    : Show time left in seconds in the current expsoure
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    <guilabel>Progress</guilabel>
+                    : Show count of of images completed in the current job.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    <guilabel>of</guilabel>
+                    : Show number of images being captured in the current job
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    <guilabel>Percent</guilabel>
+                    : Show graphical progress of the Sequence job as a bar with percentage complete
+                </para>
+            </listitem>
+        </itemizedlist>
+    </sect3>
+    <sect3 id="capture-options">
+        <title>Options</title>
+        <para>Click Options... for additional Kstars configuration for the Capture module</para>
+        <itemizedlist>
+            <listitem>
+                <para>
+                    <guilabel>Temperature threshold</guilabel>
+                    : Type the temperature threshold for cooling.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    <guilabel>Guiding Settle</guilabel>
+                    : Type the number of seconds to wait after guiding resumes before starting capture.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    <guilabel>Dialog timeout</guilabel>
+                    : Type the number of seconds that the telescope cover/uncover prompt is displayed before the job continues
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    <guilabel>Always reset Sequence when starting</guilabel>
+                    : Tick to reset capture counts to zero when a Sequence is started.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    <guilabel>Reset mount model after meridian flip</guilabel>
+                    : Tick to reset the model mount after a meridian flip
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    <guilabel>Summary screen preview</guilabel>
+                    : Tick to display received images on the the summary screen
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    <guilabel>Force DSLR presets</guilabel>
+                    : Tick to force exposure times to preset DSLR exposures
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    <guilabel>DSLR image viewer</guilabel>
+                    : Tick to display received DSLR images in the image viewer
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    <guilabel>Clear DSLR info</guilabel>
+                    : Click to clear saved DSLR image sizes
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    <guilabel>HFR Threhold modifier</guilabel>
+                    : Type the threshold for HFR increase before an autofocus is performed.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    <guilabel>In Sequence HFR chceck</guilabel>
+                    : Type the number of frames between in Sequence HFR checks
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    <guilabel>Use median focus</guilabel>
+                    : Tick to use median focus
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    <guilabel>Save Sequence HFR value to file</guilabel>
+                    : Tick to use saved HFR values for thresholds
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    <guilabel>Ok</guilabel>
+                    : Save settings and exit
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    <guilabel>Cancel</guilabel>
+                    : Exit with settings unchanged
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    <guilabel>Apply</guilabel>
+                    : Save settings.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    <guilabel>Help</guilabel>
+                    : Open KStars help documentation in browser
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    <guilabel>Restore defaults</guilabel>
+                    : Click to revert all settings to their default values
+                </para>
+            </listitem>
+        </itemizedlist>
+    </sect3>
+    <sect3 id="capture-screen-shots">
+        <title>Screen Shots</title>
         <screenshot>
-            <screeninfo>
-                Capture Settings
-            </screeninfo>
+            <screeninfo>Capture Settings</screeninfo>
             <mediaobject>
                 <imageobject>
                     <imagedata fileref="capture_settings.png" format="PNG"/>
                 </imageobject>
-                <textobject>
-                    <phrase>Capture Settings</phrase>
-                </textobject>
-            </mediaobject>
-        </screenshot>
-        <para>
-            Set all capture parameters as detailed below. Once set, you can capture a preview by click on <guibutton>Preview</guibutton> or add a job to the sequence queue.
-        </para>
-        <itemizedlist>
-            <listitem>
-                <para>
-                    <guilabel>Exposure</guilabel>: Specify exposure duration in seconds.
-                </para>
-            </listitem>
-            <listitem>
-                <para>
-                    <guilabel>Filter</guilabel>: Specify the desired filter.
-                </para>
-            </listitem>
-            <listitem>
-                <para>
-                    <guilabel>Count</guilabel>: Number of images to capture
-                </para>
-            </listitem>
-            <listitem>
-                <para>
-                    <guilabel>Delay</guilabel>: Delay in seconds between image captures.
-                </para>
-            </listitem>
-            <listitem>
-                <para>
-                    <guilabel>Type</guilabel>: Specify the type of desired CCD frame. Options are <guimenuitem>Light</guimenuitem>, <guimenuitem>Dark</guimenuitem>, <guimenuitem>Bias</guimenuitem>, and <guimenuitem>Flat</guimenuitem> frames.
-                </para>
-            </listitem>
-            <listitem>
-                <para>
-                    <guilabel>ISO</guilabel>: For DSLR cameras, specify the ISO value.
-                </para>
-            </listitem>
-            <listitem>
-                <para>
-                    <guilabel>Format</guilabel>: Specify capture save format. For all CCDs, only <guimenuitem>FITS</guimenuitem> option is available. For DSLR cameras, you can an additional option to save in <guimenuitem>Native</guimenuitem> format (&eg; RAW or JPEG).
-                </para>
-            </listitem>
-            <listitem>
-                <para>
-                    <guilabel>Custom Properties</guilabel>: Set extended properties available in the camera to the job settings.
-                </para>
-            </listitem>
-            <listitem>
-                <para>
-                    <guilabel>Calibration</guilabel>: For Dark &amp;s; Flat frames, you can set additional options explained in the <link linkend="capture-calibration-frames">Calibration Frames section below</link>.
-                </para>
-            </listitem>
-            <listitem>
-                <para>
-                    <guilabel>Frame</guilabel>: Specify the left (X), top (Y), width (W), and height (H) of the desired CCD frame. If you changed the frame dimensions, you can reset it to default values by clicking on the reset button.
-                </para>
-            </listitem>
-            <listitem>
-                <para>
-                    <guilabel>Binning</guilabel>: Specify horizontal (X) and vertical (Y) binning.
-                </para>
-            </listitem>
-        </itemizedlist>
-        <sect4 id="capture-custom-properties">
-            <title>Custom Properties</title>
-            <para>
-                Many cameras offer additional properties that cannot be directly set in the capture settings using the common control. The capture controls described above represent the most common settings shared among different cameras, but each camera is unique and may offer its own extended properties. While you can use INDI Control Panel to set any property in the driver; it is important to be able to set such property for each job in the sequence. When you click <guibutton>Custom Properties</guibutton>, a dialog is shown divided into <guilabel>Available Properties</guilabel> and <guilabel>Job Properties</guilabel>. When you move an <guilabel>Available Properties</guilabel> to the <guilabel>Job Property</guilabel> list, its current value can be recorded once you click <guibutton>Apply</guibutton>. When you add a job to the <guilabel>Sequence Queue</guilabel>, the properties values selected in the <guilabel>Job Properties</guilabel> list shall be recorded and saved.
-            </para>
-            <para>
-                The following video explains this concept is more detail with a live example:
-            </para>
-            <mediaobject>
-                <videoobject>
-                    <videodata contentdepth="450" contentwidth="800" fileref="https://www.stellarmate.com/images/fss/videos/custom_properties.mp4"/>
-                </videoobject>
                 <caption>
                     <para>
-                        <phrase>Custom Properties feature</phrase>
+                        <phrase>Capture Settings</phrase>
                     </para>
                 </caption>
             </mediaobject>
-        </sect4>
-    </sect3>
-
-    <sect3 id="capture-file-settings">
-        <title>File Settings</title>
-        
+        </screenshot>
         <screenshot>
-            <screeninfo>
-                File Settings
-            </screeninfo>
+            <screeninfo>File Settings</screeninfo>
             <mediaobject>
                 <imageobject>
                     <imagedata fileref="file_settings.png" format="PNG"/>
                 </imageobject>
-                <textobject>
-                    <phrase>File Settings</phrase>
-                </textobject>
+                <caption>
+                    <para>
+                        <phrase>File Settings</phrase>
+                    </para>
+                </caption>
             </mediaobject>
         </screenshot>
-        <para>
-            Settings for specifying where captured images are saved to, and how to generate unique file names in addition to upload mode settings.
-        </para>
-        <itemizedlist>
-            <listitem>
-                <para>
-                    <guilabel>Prefix</guilabel>: Specify the prefix to append to the generated filename. You may also append the frame type, filter, expose duration, and ISO 8601 timestamp. For example, if you specify Prefix as <userinput>M45</userinput> and checked the Type and Filter checkboxes, and assuming your filter was set to <guimenuitem>Red</guimenuitem> and your frame type is <guimenuitem>Light</guimenuitem>, the generated file names will be as follows:
-                </para>
-                <itemizedlist>
-                    <listitem>
-                        <para>
-                            M45_Light_Red_001.fits
-                        </para>
-                    </listitem>
-                    <listitem>
-                        <para>
-                            M45_Light_Red_002.fits
-                        </para>
-                    </listitem>
-                </itemizedlist>
-                <para>
-                    If <guilabel>TS</guilabel> was checked, a timestamp will be appended to the filename, &eg;
-                </para>
-                <itemizedlist>
-                    <listitem>
-                        <para>
-                            M45_Light_Red_001_2016-11-09T23-47-46.fits</para>
-                    </listitem>
-                    <listitem>
-                        <para>
-                            M45_Light_Red_002_2016-11-09T23-48-34.fits</para>
-                    </listitem>
-                </itemizedlist>
-            </listitem>
-            <listitem>
-                <para>
-                    <guilabel>Script</guilabel>: Specify an <emphasis>optional</emphasis> script to be executed after each capture is complete. The full path of the script must be specified and it must executable. To denote success, the script must return zero as this would allow the sequence to continue. If a non-zero value is returned by the script, the sequence is aborted.
-                </para>
-            </listitem>
-            <listitem>
-                <para>
-                    <guilabel>Directory</guilabel>: Local directory to save the sequence images to.
-                </para>
-            </listitem>
-            <listitem>
-                <para>
-                    <guilabel>Upload</guilabel>: Select how captured images are uploaded:
-                </para>
-                <orderedlist>
-                    <listitem>
-                        <para>
-                            <guilabel>Client</guilabel>: Captured images are only uploaded to Ekos and saved to the local directory specified above.</para>
-                    </listitem>
-                    <listitem>
-                        <para>
-                            <guilabel>Local</guilabel>: Captured images are only saved locally on the remote computer.</para>
-                    </listitem>
-                    <listitem>
-                        <para>
-                            <guilabel>Both</guilabel>: Captured images are saved on the remote device <emphasis role="bold">and</emphasis> uploaded to Ekos.</para>
-                    </listitem>
-                </orderedlist>
-                <para>
-                    When selecting <guimenuitem>Local</guimenuitem> or <guimenuitem>Both</guimenuitem>, you must specify the remote directory where the remote images are saved to. By default, all captured images are uploaded to Ekos.
-                </para>
-            </listitem>
-            <listitem>
-                <para>
-                    <guilabel>Remote</guilabel>: When selecting either <guimenuitem>Local</guimenuitem> or <guimenuitem>Both</guimenuitem> modes above, you must specify the remote directory where remote images are saved to.
-                </para>
-            </listitem>
-        </itemizedlist>
-    </sect3>
-    
-    <sect3 id="capture-limit-settings">
-        <title>Limit Settings</title>
-        
         <screenshot>
-            <screeninfo>
-                Limit Settings
-            </screeninfo>
+            <screeninfo>Limit Settings</screeninfo>
             <mediaobject>
                 <imageobject>
                     <imagedata fileref="limit_settings.png" format="PNG"/>
                 </imageobject>
-                <textobject>
-                    <phrase>Limit Settings</phrase>
-                </textobject>
+                <caption>
+                    <para>
+                        <phrase>Limit Settings</phrase>
+                    </para>
+                </caption>
             </mediaobject>
         </screenshot>
-        <para>
-            Limit settings are applicable to all the images in the sequence queue. When a limit is exceeded, Ekos shall command the appropriate action to remedy the situation as explained below.
-        </para>
-        <itemizedlist>
-            <listitem>
-                <para>
-                    <guilabel>Guiding Deviation</guilabel>: If checked, it enforces a limit of maximum allowable guiding deviation for the exposure, if autoguiding is used. If the guiding deviation exceeds this limit in arcseconds, it aborts the exposure sequence. It will automatically resume the exposure sequence again once the guiding deviation goes below this limit.</para>
-            </listitem>
-            <listitem>
-                <para>
-                    <guilabel>Autofocus if HFR &gt;</guilabel>: If autofocus is enabled in the <link linkend="ekos-focus">focus module</link> and at least one autofocus operation was completed successfully, you can set the maximum acceptable HFR value. If this option is enabled then between consecutive exposures, the HFR value is recalculated, and if found to exceed the maximum acceptable HFR value, then an autofocus operation is automatically triggered. If the autofocus operation is completed successfully, the sequence queue resumes, otherwise, the job is aborted.</para>
-            </listitem>
-            <listitem>
-                <para>
-                    <guilabel>Meridian Flip</guilabel>: If supported by the mount, set the hour angle limit (in hours) before a <ulink url="http://astronomy.mdodd.com/gem_movement.html">meridian flip</ulink> is commanded. For example, if you set the meridian flip duration to 0.1 hours, Ekos shall wait until the mount passes the meridian by 0.1 hours (6 minutes), then it commands the mount to perform a meridian flip. After the meridian flip is complete, Ekos re-aligns using astrometry.net (if <link linkend="ekos-align">the alignment</link> was used) and resumes guiding (if it was started before) and then resumes the capture process automatically.</para>
-            </listitem>
-        </itemizedlist>
-    </sect3>
-    
-    <sect3 id="capture-sequence-queue">
-        <title>Sequence Queue</title>
-        
-        <para>
-            Sequence Queue is the primary hub of the Ekos Capture Module. This is where you can plan and execute jobs using the sequence queue built-in powerful editor. To add a job, simply select all the parameters from the capture and file settings as indicated above. Once you selected your desired parameters, click on the add button <inlinemediaobject><imageobject><imagedata fileref="list-add.png" format="PNG"/></imageobject></inlinemediaobject> in the sequence queue to add it to the queue.
-        </para>
         <screenshot>
-            <screeninfo>
-                Sequence Queue
-            </screeninfo>
+            <screeninfo>Sequence Queue</screeninfo>
             <mediaobject>
                 <imageobject>
                     <imagedata fileref="sequence_settings.png" format="PNG"/>
                 </imageobject>
-                <textobject>
-                    <phrase>Sequence Queue</phrase>
-                </textobject>
+                <caption>
+                    <para>
+                        <phrase>Sequence Queue</phrase>
+                    </para>
+                </caption>
             </mediaobject>
         </screenshot>
-        <para>
-            You can add as many jobs as desired. While it is not strictly necessary, it is preferable to add the dark and flat jobs after the light frames. Once you are done adding jobs, simply click <guilabel>Start Sequence</guilabel> <inlinemediaobject><imageobject><imagedata fileref="media-playback-start.png" format="PNG"/></imageobject></inlinemediaobject> to begin executing the jobs. A job state changes from <guilabel>Idle</guilabel> to <guilabel>In Progress</guilabel> and finally to <guilabel>Complete</guilabel> once it is done. The Sequence Queue automatically starts the next job. If a job is aborted, it may be resumed again. To pause a sequence, click the pause button <inlinemediaobject><imageobject><imagedata fileref="media-playback-pause.png" format="PNG"/></imageobject></inlinemediaobject> and the sequence will be stopped after the current capture is complete. To reset the status of all the jobs, simply click the reset button <inlinemediaobject><imageobject><imagedata fileref="view-refresh.png" format="PNG"/></imageobject></inlinemediaobject>. Please beware that all image progress counts are reset as well. To preview an image in &kstars; FITS Viewer, click the <guibutton>Preview</guibutton> button.
-        </para>
-        <para>
-            Sequence queues can be saved as an XML file with extension <filename role="extension">.esq</filename> (Ekos Sequence Queue). To load a sequence queue, click the open document button <inlinemediaobject><imageobject><imagedata fileref="document-open.png" format="PNG"/></imageobject></inlinemediaobject>. Please note that it will replace any current sequence queues in Ekos.
-        </para>
-
-        <important>
-            <para>
-                <emphasis role="bold">Job Progress</emphasis>: Ekos is designed to execute and resume the sequence over multiple nights if required. Therefore, if <guilabel>Remember Job Progress</guilabel> option is enabled in <link linkend="ekos">Ekos Options</link>, Ekos shall scan the file system to count how many images are already completed and will resume the sequence from where it was left off. If this default behavior is not desired, simply turn off <guilabel>Remember Job Progress</guilabel> under options.
-            </para>
-        </important>
-
-        <para>
-            To edit a job, double click it. You will notice the add button <inlinemediaobject><imageobject><imagedata fileref="list-add.png" format="PNG"/></imageobject></inlinemediaobject> now changed to check mark button <inlinemediaobject><imageobject><imagedata fileref="dialog-ok-apply.png" format="PNG"/></imageobject></inlinemediaobject>. Make your changes on the left-hand side of the CCD module and once done, click on the check mark button. To cancel a job edit, click anywhere on the empty space within the sequence queue table.
-        </para>
-        <para>
-            If your camera supports live video feed, then you can click the <guibutton>Live Video</guibutton> button to start streaming. The video stream window enables recording and subframing of the video stream. For more information, check the video below:
-        </para>
-        <mediaobject>
-            <videoobject>
-                <videodata contentdepth="315" contentwidth="560" fileref="https://www.youtube.com/embed/qRsAqTL4ZZI"/>
-            </videoobject>
-            <caption>
-                <para>
-                    <phrase>Recording feature</phrase>
-                </para>
-            </caption>
-        </mediaobject>
-    </sect3>
-    
-    <sect3 id="capture-filter-settings">
-        <title>Filter Settings</title>
-        
         <screenshot>
-            <screeninfo>
-                Filter Queue
-            </screeninfo>
+            <screeninfo>Filter Queue</screeninfo>
             <mediaobject>
                 <imageobject>
                     <imagedata fileref="filter_settings.png" format="PNG"/>
                 </imageobject>
-                <textobject>
-                    <phrase>Filter Queue</phrase>
-                </textobject>
+                <caption>
+                    <para>
+                        <phrase>Filter Wheel Settings</phrase>
+                    </para>
+                </caption>
             </mediaobject>
         </screenshot>
-        
-        <para>
-            Click the filter icon <inlinemediaobject><imageobject><imagedata fileref="view-filter.png" format="PNG"/></imageobject></inlinemediaobject> next to the filter wheel selection box to open the filter settings dialog. If you are using filters that are not parafocal with each other and require a specific amount of focus offsets in order to get them into proper then set all the relative focus offsets in the dialog.
-        </para>
-        <para>
-            Configure settings for each filter individually:
-        </para>
-        <orderedlist>
-            <listitem>
-                <para>
-                    <guilabel>Filter</guilabel>: Filter Name
-                </para>
-            </listitem>
-            <listitem>
-                <para>
-                    <guilabel>Exposure</guilabel>: Set exposure time used when performing focus under this filter. By default, it is set to 1 second.
-                </para>
-            </listitem>
-            <listitem>
-                <para>
-                    <guilabel>Offset</guilabel>: Set relative offsets. Ekos will command a focus offset change if there is a difference between the current and target filter offsets. For example, given the values in the example image, if the current filter is set to <emphasis>Red</emphasis> and next filter is <emphasis>Green</emphasis>, then Ekos shall command the focuser to Focus In by +300 ticks. Relative positive focus offsets denote Focus Out while negative values denote Focus In.
-                </para>
-            </listitem>
-            <listitem>
-                <para>
-                    <guilabel>Auto Focus</guilabel>: Check this option to initial AutoFocus process whenever the filter is changed to this filter.
-                </para>
-            </listitem>
-            <listitem>
-                <para>
-                    <guilabel>Lock Filter</guilabel>: Set which filter should be set and <emphasis>locked</emphasis> when performing autofocus for this filter.
-                </para>
-            </listitem>
-        </orderedlist>
-        <para>
-            Let's take an example. Suppose the capture sequence is running and the current filter is <guilabel>Green</guilabel>, so the relative offset is already set to +300. The next image in the sequence uses Hydrogen Alpha (H_Alpha) so before Ekos captures the next frame, the following actions take place:
-        </para>
-        <itemizedlist>
-            <listitem>
-                <para>
-                    Since Luminosity is specified as the locked filter and auto-focus is checked, the filter is changed to Luminosity
-                </para>
-            </listitem>
-            <listitem>
-                <para>
-                    A focus offset is -300 is applied since the prior filter <guilabel>Green</guilabel> was moved +300 previously.
-                </para>
-            </listitem>
-            <listitem>
-                <para>
-                    Auto Focus process is initiated.
-                </para>
-            </listitem>
-            <listitem>
-                <para>
-                    Once Auto Focus is complete, the filter is changed to H_Alpha.
-                </para>
-            </listitem>
-            <listitem>
-                <para>
-                    A focus offset of -1200 is applied.
-                </para>
-            </listitem>
-            <listitem>
-                <para>
-                    Capture sequence is resumed.
-                </para>
-            </listitem>
-        </itemizedlist>
-    </sect3>
-
-    <sect3 id="capture-fits-viewer">
-        <title>FITS Viewer</title>
-        
-        <para>
-            Captured images are displayed in &kstars; FITS Viewer tool, and also in the summary screen. Set options related to how the images are displayed in the viewer.
-        </para>
-        <itemizedlist>
-            <listitem>
-                <para>
-                    <guilabel>Auto Dark</guilabel>: You can capture an image and auto dark subtract it by checking this option. Note that this option is only applicable when using <guilabel>Preview</guilabel>, you cannot use it in batch mode sequence queue.
-                </para>
-            </listitem>
-            <listitem>
-                <para>
-                    <guilabel>Effects</guilabel>: Image enhancement filter to be applied to the image after capture.
-                </para>
-            </listitem>
-        </itemizedlist>
-    </sect3>
-
-    <sect3 id="capture-rotation-settings">
-        <title>Rotator Settings</title>
-        
         <screenshot>
-            <screeninfo>
-                Rotator Settings
-            </screeninfo>
+            <screeninfo>Rotator Settings</screeninfo>
             <mediaobject>
                 <imageobject>
                     <imagedata fileref="ekos_rotator_settings.png" format="PNG"/>
                 </imageobject>
-                <textobject>
-                    <phrase>Rotator Settings</phrase>
-                </textobject>
+                <caption>
+                    <para>
+                        <phrase>Rotator Settings</phrase>
+                    </para>
+                </caption>
             </mediaobject>
         </screenshot>
-        
-        <para>
-            Field Rotators are supported in INDI &amp; Ekos. The rotator angle is the raw angle reported by the rotator and is not necessary the <ulink url="https://en.wikipedia.org/wiki/Position_angle">Position Angle</ulink>. A Position Angle of <emphasis>zero</emphasis> indicates that the frame top (indicated by small arrow) is pointing <emphasis>directly</emphasis> at the pole. The position angle is expressed as E of N (East of North), so 90 degrees PA indicates the frame <emphasis>top</emphasis> points 90 degrees away (counter-clockwise) from the pole. Check <ulink url="http://www.srl.caltech.edu/NuSTAR_Public/NuSTAROperationSite/file/NuSTAR-PA.pdf">examples</ulink> for various PAs.
-        </para>
-        <para>
-            To calibrate the Position Angle (PA), capture and solve an image in the <link linkend="ekos-align">Ekos Align module</link>. An <emphasis>offset</emphasis> and a <emphasis>multiplier</emphasis> are applied to the raw angle to produce the position angle. The Ekos Rotator dialog permits direct control of the raw angle and also the PA. The offset and multiplier can be changed manually to synchronize the rotator's raw angle with the actual PA. Check <guilabel>Sync FOV to PA</guilabel> to rotate the current Field of View (FOV) indicator on the Sky Map with the PA value as you change it in the dialog.
-        </para>
-        
-        <mediaobject>
-            <videoobject>
-                <videodata contentdepth="315" contentwidth="560" fileref="https://www.youtube.com/embed/V_hRPMlPjmA"/>
-            </videoobject>
-            <caption>
-                <para>
-                    <phrase>Rotator settings</phrase>
-                </para>
-            </caption>
-        </mediaobject>
-        
-        <para>
-            Each capture job may be assigned different rotator angles, but be aware that this would cause guiding to abort as it would lose track of the guide star when rotating. Therefore, for most sequences, the rotator angle is kept the same for all capture jobs.
-        </para>
-    </sect3>
-    
-    <sect3 id="capture-calibration-frames">
-        <title>Calibration Frames</title>
-        
         <screenshot>
-            <screeninfo>
-                Calibration settings
-            </screeninfo>
+            <screeninfo>Calibration settings</screeninfo>
             <mediaobject>
                 <imageobject>
                     <imagedata fileref="calibration_settings.png" format="PNG"/>
                 </imageobject>
-                <textobject>
-                    <phrase>Calibration settings</phrase>
-                </textobject>
+                <caption>
+                    <para>
+                        <phrase>Calibration Settings</phrase>
+                    </para>
+                </caption>
             </mediaobject>
         </screenshot>
-        <para>
-            For Flat Field frames, you can set calibration options in order to automate the process. The calibration options are designed to facilitate automatic unattended flat field frame capture. It can also be used for dark and bias frames if desired. If your camera is equipped with a mechanical shutter, then it is not necessary to set calibration settings unless you want to close the dust cover to ensure no light at all passes through the optical tube. For flat fields, you must specify the flat field light source, and then specify the duration of the flat field frame. The duration can be either manual or based on ADU calculations.
-        </para>
-        <orderedlist>
-            <listitem>
-                <para>
-                    Flat Field Source
-                    <itemizedlist>
-                        <listitem>
-                            <para>
-                                <guilabel>Manual</guilabel>: The flat light source is manual.</para>
-                        </listitem>
-                        <listitem>
-                            <para>
-                                <guilabel>Dust Cover with Built-In Flat Light</guilabel>: If using a dust cover with builtin light source (&eg; FlipFlat). For dark and bias frames, close the dust cap before proceeding. For flat frames, close the dust cap and turn on the light source.</para>
-                        </listitem>
-                        <listitem>
-                            <para>
-                                <guilabel>Dust Cover with External Flat Light</guilabel>: If using a dust cover with an external flat light source. For dark and bias frames, close the dust cap before proceeding. For flat frames, open the dust cap and turn on the light source. The external flat light source location is presumed to be the parking location.</para>
-                        </listitem>
-                        <listitem>
-                            <para>
-                                <guilabel>Wall</guilabel>: Light source is a panel on the observatory wall. Specify the Azimuth and Altitude coordinates of the panel and the mount shall slew there before capturing the flat field frames. If the light panel is controllable from INDI, Ekos shall turn it on/off as required.</para>
-                        </listitem>
-                        <listitem>
-                            <para>
-                                <guilabel>Dawn/Dusk</guilabel>: Currently unsupported.</para>
-                        </listitem>
-                    </itemizedlist>
-                </para>
-            </listitem>
-            <listitem>
-                <para>
-                    Flat Field Duration
-                    <itemizedlist>
-                        <listitem>
-                            <para>
-                                <guilabel>Manual</guilabel>: Duration is as specified in the Sequence Queue.</para>
-                        </listitem>
-                        <listitem>
-                            <para>
-                                <guilabel>ADU</guilabel>: Duration is variable until specified ADU is met.</para>
-                        </listitem>
-                    </itemizedlist>
-                </para>
-            </listitem>
-        </orderedlist>
-        <para>
-            Before the calibration capture process is started, you can request Ekos to park the mount and/or dome. Depending on your flat source selection above, Ekos will use the appropriate flat light source before starting flat frames capture. If ADU is specified, Ekos begins by capturing a couple of preview images to establish the curve required to achieve the desired ADU count. Once an appropriate value is calculated, another capture is taken and ADU is recounted until a satisfactory value is achieved.
-        </para>
     </sect3>
-    
     <sect3 id="capture-video-tutorials">
         <title>Video Tutorials</title>
-        
         <mediaobject>
             <videoobject>
                 <videodata contentdepth="315" contentwidth="560" fileref="https://www.youtube.com/embed/Gz07j7VPnpc"/>
@@ -543,7 +1603,6 @@
                 </para>
             </caption>
         </mediaobject>
-        
         <mediaobject>
             <videoobject>
                 <videodata contentdepth="315" contentwidth="560" fileref="https://www.youtube.com/embed/yfz9_UJIvLY"/>
@@ -551,6 +1610,36 @@
             <caption>
                 <para>
                     <phrase>Filter Wheels</phrase>
+                </para>
+            </caption>
+        </mediaobject>
+        <mediaobject>
+            <videoobject>
+                <videodata contentdepth="450" contentwidth="800" fileref="https://www.stellarmate.com/images/fss/videos/custom_properties.mp4"/>
+            </videoobject>
+            <caption>
+                <para>
+                    <phrase>Custom Properties tool</phrase>
+                </para>
+            </caption>
+        </mediaobject>
+        <mediaobject>
+            <videoobject>
+                <videodata contentdepth="315" contentwidth="560" fileref="https://www.youtube.com/embed/V_hRPMlPjmA"/>
+            </videoobject>
+            <caption>
+                <para>
+                    <phrase>Rotator settings</phrase>
+                </para>
+            </caption>
+        </mediaobject>
+        <mediaobject>
+            <videoobject>
+                <videodata contentdepth="315" contentwidth="560" fileref="https://www.youtube.com/embed/qRsAqTL4ZZI"/>
+            </videoobject>
+            <caption>
+                <para>
+                    <phrase>Recording video</phrase>
                 </para>
             </caption>
         </mediaobject>

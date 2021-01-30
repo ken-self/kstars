@@ -6,52 +6,8 @@
         <tertiary>User Interface</tertiary>
     </indexterm>
     <para>
-        Ekos Astrophotography Tool is organized into several <emphasis>Modules</emphasis>. A module is a set of functions and tasks for a particular step in astrophotography and/or data acquisition. Currently, the following modules are included with Ekos:
-    </para>
-    <itemizedlist>
-        <listitem>
-            <para>
-                Setup &amp; Summary Module
-            </para>
-        </listitem>
-        
-        <listitem>
-            <para>
-                Scheduler Module
-            </para>
-        </listitem>
-        
-        <listitem>
-            <para>
-                Capture Module
-            </para>
-        </listitem>
-        
-        <listitem>
-            <para>
-                Focus Module
-            </para>
-        </listitem>
-        
-        <listitem>
-            <para>
-                Alignment Module
-            </para>
-        </listitem>
-        
-        <listitem>
-            <para>
-                Guide Module
-            </para>
-        </listitem>
-        
-        <listitem>
-            <para>
-                Mount Module
-            </para>
-        </listitem>
-    </itemizedlist>
-    
+        Ekos Astrophotography Tool is organized into several <emphasis>Modules</emphasis>. A module is a set of functions and tasks for a particular step in astrophotography and/or data acquisition. 
+        </para>   
     <para>Each module has its own tab and icon in the graphical user interface as illustrated in the screenshot below:</para>
     <screenshot>
         <screeninfo>
@@ -59,19 +15,19 @@
         </screeninfo>
         <mediaobject>
             <imageobject>
-                <imagedata fileref="ekos_summary_cheatsheet.png" format="PNG"/>
+                <imagedata fileref="ekos_module_toolbar.png" format="PNG"/>
             </imageobject>
             <textobject>
-                <phrase>Ekos summary cheatsheet</phrase>
+                <phrase>Ekos Module Toolbar</phrase>
             </textobject>
         </mediaobject>
     </screenshot>
     <variablelist>
         <varlistentry>
-            <term>Summary &amp; Setup Module</term>
+            <term>Summary and Setup Module</term>
             <listitem>
                 <para>
-                    As its name suggests, this is where you will create and manage your equipment profile, and connect to your devices. It also provides a summary view where the capture progress along with the focus &amp; guide operations is displayed in a compact format to convey the most important information relevant to the user.
+                    This is where you create and manage your equipment profile, and connect to your devices. It also provides a summary view where the capture progress along with the focus and guide operations is displayed in a compact format to convey the most important information relevant to the user.
                 </para>
             </listitem>
         </varlistentry>
@@ -79,7 +35,7 @@
             <term>Scheduler Module</term>
             <listitem>
                 <para>
-                    After mastering Ekos, users are encouraged to learn how to use the Scheduler module since it facilitates the complete observation process greatly. It enables you to select multiple targets, specify which conditions and requirements to be met, and what frames are required for capture. Afterwards the scheduler intelligently calculates the best observation time for each object and then proceed to control the complete observatory from startup to shutdown.
+                    The Scheduler module facilitates the complete observation process. It enables you to select multiple targets, specify which conditions and requirements to be met, and what frames are required for capture. Afterwards the scheduler intelligently calculates the best observation time for each object and then proceed to control the complete observatory from startup to shutdown.
                 </para>
             </listitem>
         </varlistentry>
@@ -87,7 +43,7 @@
             <term>Capture Module</term>
             <listitem>
                 <para>
-                    This is the primary module for camera &amp; filter wheel control. Create imaging sequences, capture previews, and watch video streams. It supports rotator control and can automatically capture flat frames in a number of scenarios.
+                    This is the primary module for camera and filter wheel control. Create imaging sequences, capture previews, and watch video streams. It supports rotator control and can automatically capture flat frames in a number of scenarios.
                 </para>
             </listitem>
         </varlistentry>
@@ -103,7 +59,7 @@
             <term>Guide Module</term>
             <listitem>
                 <para>
-                    To achieve long exposure astrophotography, guiding is necessary to ensure the image is locked and stabilized for the complete duration of the exposure duration. Deviations from the frame with time can lead to blurry images and star trails. In the guide module, it can automatically select a suitable guide star and then lock the mount to always keep that star in its position. If the guide module detects any deviation from this locked position, it sends correction pulses to the mount to bring it back to the original position.
+                    guiding is necessary for long exposure astrophotography, to ensure the image is locked and stabilized for the complete duration of the exposure. Deviations from the frame with time can lead to blurry images and star trails. The guide module can automatically select a suitable guide star and lock the mount to keep that star in its position. If the guide module detects any deviation from this locked position, it sends correction pulses to the mount to bring it back to the original position.
                 </para>
             </listitem>
         </varlistentry>
@@ -111,7 +67,7 @@
             <term>Mount Module</term>
             <listitem>
                 <para>
-                    Mount control can be either done via the Sky Map interactively or via the Mount Control Panel in the mount module. Configure telescope properties (focal length &amp; aperture) for both your primary imaging telescope and guide scope. However, it is recommended to select the telescopes in the equipment profile and not change the values directly in the mount module.
+                    Mount control can be either done via the Sky Map interactively or via the Mount Control Panel in the mount module. Configure telescope properties (focal length and aperture) for both your primary imaging telescope and guide scope. However, it is recommended to select the telescopes in the equipment profile and not change the values directly in the mount module.
                 </para>
             </listitem>
         </varlistentry>

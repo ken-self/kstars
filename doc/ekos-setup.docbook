@@ -1,40 +1,238 @@
 <sect2 id="ekos-setup">
     <title>Ekos Setup</title>
-<indexterm>
-    <primary>Tools</primary>
-    <secondary>Ekos</secondary>
-    <tertiary>Setup</tertiary>
-</indexterm>
-<screenshot>
-    <screeninfo>
-        Ekos Summary
-    </screeninfo>
-    <mediaobject>
-        <imageobject>
-            <imagedata fileref="ekos_summary.png" format="PNG"/>
-        </imageobject>
-        <textobject>
-            <phrase>Ekos Summary</phrase>
-        </textobject>
-    </mediaobject>
-</screenshot>
-<para>
-    <emphasis role="bold">Ekos</emphasis> is a part of <ulink url="http://edu.kde.org/kstars">&kstars;</ulink>. &kstars;/Ekos is already included with your StellarMate gadget. It is also <ulink url="https://www.stellarmate.com/component/jdownloads/category/2-ekos.html?Itemid=507">available for &Linux;, &MacOS;, and &Windows;</ulink> if you want to install on your primary machine. After you run &kstars; on your PC or on StellarMate (Either directly via HDMI or via <link linkend="ekos-tutorials-viewer">VNC</link>), Ekos can be accessed from the <guimenu>Tools</guimenu> menu or via the <guiicon>Ekos</guiicon> on the main toolbar, or by a keyboard shortcut (<keycombo>&Ctrl; <keycap>K</keycap></keycombo>). In addition to the Ekos window, &kstars; provides a more detailed INDI Control Panel where you can directly set and control the device parameters.
-</para>
-<para>
-    When running Ekos, it is <emphasis>not</emphasis> necessary to start INDI Server via StellarMate Web Manager as Ekos manages that transparently.
-</para>
-<screenshot>
-    <screeninfo>
-        &kstars; Main Window
-    </screeninfo>
-    <mediaobject>
-        <imageobject>
-            <imagedata fileref="kstars_annotation.png" format="PNG"/>
-        </imageobject>
-        <textobject>
-            <phrase>&kstars; Main Window</phrase>
-        </textobject>
-    </mediaobject>
-</screenshot>
+    <indexterm>
+        <primary>Tools</primary>
+        <secondary>Ekos</secondary>
+        <tertiary>Setup</tertiary>
+    </indexterm>
+    <screenshot>
+        <screeninfo>Ekos Summary</screeninfo>
+        <mediaobject>
+            <imageobject>
+                <imagedata fileref="ekos_summary.png" format="PNG"/>
+            </imageobject>
+            <textobject>
+                <phrase>Ekos Summary</phrase>
+            </textobject>
+        </mediaobject>
+    </screenshot>
+    <para>Ekos Setup Module is the main control module for Ekos. Use the Setup module to maintain equipment profiles, start a profile, monitor the progress of imaging sessions and stop the profile.</para>
+    <para>A Profile is a collection of settings that govern how Ekos connects to an INDI server, INDI devices on the INDI server and auto-guiding applications.</para>
+    <variablelist>
+        <varlistentry>
+            <term>Profiles</term>
+            <listitem>
+                <para>
+                    You define profiles for your equipment and their connection mode using the <guilabel>Profile Editor</guilabel>. Ekos comes pre-installed with the <guimenuitem>Simulators</guimenuitem> profile which is used to connect to simulator devices to demonstrate Ekos functions:
+                </para>
+                <itemizedlist>
+                    <listitem>
+                        <para>
+                           The INDI service runs on a either local or remote computer. Local mode is when INDI Server is running on the same machine as Ekos and all the devices are connected directly to that machine. Remote mode is when INDI server runs on a different machine (for example, on a Raspberry PI) and you need to set the INDI server host and port in Ekos.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                          The Auto Connect option automaticallly connects to all devices in the profile after INDI server is started. Do not use the Auto Connect option if you want to make changes to the driver settings before connecting to them &eg; baud rate or IP address. Manually connect to each driver with the INDI control panel.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            The Site Info option is used when connecting to a remote geographic site so that Ekos is in sync with the location coordinates and time. Ekos loads the <emphasis role="bold">current</emphasis> city and timezone whenever Ekos is started with this profile.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <guilabel>Guiding</guilabel>: Select which Guide application you want to use for guiding. By default, the Ekos internal Guide Module is utilized. External guiders include PHD2 and LinGuider.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            INDI Web Manager option is used when INDI Web Manager is running on the INDI Server. It connects to the INDI Web Manager when the profile starts and uses it to start the INDI drivers in the profile.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <guilabel>Device Selection</guilabel>: Select your devices from each category. Please note that if you have a CCD with a guide head, you can leave the guider drop-down menu <emphasis>blank</emphasis> as Ekos will auto-detect the guide head from the CCD camera. Similarly, if your CCD includes embedded filter wheel support, then you do <emphasis>not</emphasis> need to specify the filter wheel device in the filter drop-down menu.
+                        </para>
+                    </listitem>
+                </itemizedlist>
+            </listitem>
+        </varlistentry>
+        <varlistentry>
+            <term>Start &amp; Stop INDI</term>
+            <listitem>
+                <para>
+                    Start and Stop INDI services. Once INDI server is established, INDI Control Panel will be displayed. Here you can change some driver options such as which port the device is connected to &etc;
+                </para>
+            </listitem>
+        </varlistentry>
+        <varlistentry>
+            <term>Connect &amp; Disconnect Devices</term>
+            <listitem>
+                <para>
+                    Connect to INDI server. Based on the devices connected, Ekos modules (CCD, Focus, Guide, &etc;) will be established and available to use.
+                </para>
+                <para>
+                    Once you are ready, click <guibutton>Start INDI</guibutton> to establish INDI server and connection to your equipment. Ekos shall create the various module icons (Mount, Capture, Focus, &etc;) as the connection is established with the device.
+                </para>
+            </listitem>
+        </varlistentry>
+    </variablelist>
+    <sect3 id="setup-operation">
+        <title>Using the Setup Module</title>
+        <itemizedlist>
+            <listitem>
+                <para>1. Select a Profile group</para>
+                <itemizedlist>
+                    <listitem>
+                        <para>Profile: Select the profile to use in Ekos</para>
+                    </listitem>
+                    <listitem>
+                        <para>Plus: Click to create a new profile</para>
+                    </listitem>
+                    <listitem>
+                        <para>Pencil: Click to edit the slected profile</para>
+                    </listitem>
+                    <listitem>
+                        <para>Minus: Click to delete the selected profile</para>
+                    </listitem>
+                    <listitem>
+                        <para>Dice: Click to open Custom Drivers tool</para>
+                    </listitem>
+                    <listitem>
+                        <para>Wand: Click to open Profile Wizard tool</para>
+                    </listitem>
+                </itemizedlist>
+            </listitem>
+            <listitem>
+                <para>2. Start &amp; Stop INDI group</para>
+                <itemizedlist>
+                    <listitem>
+                        <para>Play</para>
+                    </listitem>
+                    <listitem>
+                        <para>Stop</para>
+                    </listitem>
+                    <listitem>
+                        <para>Cloud</para>
+                    </listitem>
+                    <listitem>
+                        <para>Indi</para>
+                    </listitem>
+                    <listitem>
+                        <para>Port</para>
+                    </listitem>
+                    <listitem>
+                        <para>Options</para>
+                    </listitem>
+                    <listitem>
+                        <para>Logs</para>
+                    </listitem>
+                </itemizedlist>
+            </listitem>
+            <listitem>
+                <para>2. Connect &amp; Disconnect Devices group</para>
+                <itemizedlist>
+                    <listitem>
+                        <para>Connect</para>
+                    </listitem>
+                    <listitem>
+                        <para>Disconnect</para>
+                    </listitem>
+                </itemizedlist>
+            </listitem>
+            <listitem>
+                <para>Summary section</para>
+                <itemizedlist>
+                    <listitem>
+                        <para>Capture group</para>
+                        <itemizedlist>
+                            <listitem>
+                                <para>Status</para>
+                            </listitem>
+                            <listitem>
+                                <para>Viewer</para>
+                            </listitem>
+                            <listitem>
+                                <para>Image</para>
+                            </listitem>
+                            <listitem>
+                                <para>Sequence</para>
+                            </listitem>
+                            <listitem>
+                                <para>Overall</para>
+                            </listitem>
+                        </itemizedlist>
+                    </listitem>
+                    <listitem>
+                        <para>Mount &amp; Alignment group</para>
+                        <itemizedlist>
+                            <listitem>
+                                <para>Status</para>
+                            </listitem>
+                            <listitem>
+                                <para>Target</para>
+                            </listitem>
+                            <listitem>
+                                <para>RA</para>
+                            </listitem>
+                            <listitem>
+                                <para>DE</para>
+                            </listitem>
+                            <listitem>
+                                <para>AZ</para>
+                            </listitem>
+                            <listitem>
+                                <para>AL</para>
+                            </listitem>
+                        </itemizedlist>
+                    </listitem>
+                    <listitem>
+                        <para>Focus group</para>
+                        <itemizedlist>
+                            <listitem>
+                                <para>Status</para>
+                            </listitem>
+                            <listitem>
+                                <para>HFR</para>
+                            </listitem>
+                            <listitem>
+                                <para>Focus view</para>
+                            </listitem>
+                            <listitem>
+                                <para>HFR profile</para>
+                            </listitem>
+                        </itemizedlist>
+                    </listitem>
+                    <listitem>
+                        <para>Guide group</para>
+                        <itemizedlist>
+                            <listitem>
+                                <para>Status</para>
+                            </listitem>
+                            <listitem>
+                                <para>sigma RA</para>
+                            </listitem>
+                            <listitem>
+                                <para>sigma DE</para>
+                            </listitem>
+                            <listitem>
+                                <para>Guide graph</para>
+                            </listitem>
+                            <listitem>
+                                <para>Star profile</para>
+                            </listitem>
+                        </itemizedlist>
+                    </listitem>
+                    <listitem>
+                        <para>Options</para>
+                    </listitem>
+                    <listitem>
+                        <para>Clear</para>
+                    </listitem>
+                </itemizedlist>
+            </listitem>
+        </itemizedlist>
+    </sect3>
 </sect2>

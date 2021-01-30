@@ -1,0 +1,192 @@
+<sect2 id="ekos-quick-start">
+    <title>Ekos Quick Start</title>
+    <indexterm>
+        <primary>Tools</primary>
+        <secondary>Ekos</secondary>
+        <tertiary>Quick Start</tertiary>
+    </indexterm>
+    <para>This quick start guide helps you to take your first image with Ekos.</para>
+    <sect3 id="ekos-quick-start-prereq">
+        <title>Pre-requisites</title>
+        <itemizedlist>
+            <listitem>
+                <para>INDI is <ulink url="https://indilib.org/download.html">installed</ulink> on either the same computer as KStars/Ekos or on a separate remote computer on the same network.</para>
+            </listitem>
+            <listitem>
+                <para>If INDI is on a remote computer, Indi Web Manager is <ulink url="https://indilib.org/support/tutorials/162-indi-web-manager.html">installed</ulink> and running.</para>  
+            </listitem>
+            <listitem>
+                <para>KStars/Ekos is <ulink url="https://edu.kde.org/kstars/install.php">installed</ulink></para>
+            </listitem>
+            <listitem>
+                <para>System clock has correct time</para>
+            </listitem>
+            <listitem>
+                <para>Telescope (Optical tube) attached to mount</para>
+            </listitem>
+            <listitem>
+                <para>Camera attached to telescope</para>
+            </listitem>
+            <listitem>
+                <para>Mount connected to INDI computer</para>
+            </listitem>
+            <listitem>
+                <para>Camera connected to INDI computer</para>
+            </listitem>
+            <listitem>
+                <para>Telescope objective uncovered</para>
+            </listitem>
+            <listitem>
+                <para>Mount in parked position</para>
+            </listitem>
+            <listitem>
+                <para>Camera roughly in focus</para>
+            </listitem>
+        </itemizedlist>
+    </sect3>
+    <sect3 id="ekos-quick-start-instruct">
+        <title>Instructions</title>
+        <para>Follow these instructions to set up your equipment in Ekos for the first time and take your first image. This can be done either in daylight or at night. The image will probably be out of focus and either under-exposed (if taken at night), or over-exposed (if taken in daylight).</para>
+        <itemizedlist>
+            <listitem>
+                <para>Launch KStars</para>
+            </listitem>
+            <listitem>
+                <para>KStars Window</para>
+                <itemizedlist>
+                    <listitem>
+                        <para>Menu Settings > Geographic. Opens Set Geographic Location tool</para>
+                        <itemizedlist>
+                            <para>Set Geographic Location tool</para>
+                            <listitem>
+                                <para>Type City filter. Use the name of your nearest large town/city. Choose city list is filtered.</para>
+                            </listitem>
+                            <listitem>
+                                <para>Select city. Fills in the View/Edit Location Data settings.</para>
+                            </listitem>
+                            <listitem>
+                                <para>Click Ok. Saves settings and closes the Set Geographic Location tool.</para>
+                            </listitem>
+                        </itemizedlist>
+                    </listitem>
+                    <listitem>
+                        <para>Menu Tools > Ekos. Opens Ekos</para>
+                    </listitem>
+                </itemizedlist>
+            </listitem>
+            <listitem>
+                <para>Ekos Window</para>
+                <itemizedlist>
+                    <listitem>
+                        <para>Open at Setup Module</para>
+                        <itemizedlist>
+                            <para>Setup Module</para>
+                            <listitem>
+                                <para>Click Profile Wizard. Opens the Profile Wizard</para>
+                                <itemizedlist>
+                                    <para>Profile Wizard Welcome</para>
+                                    <listitem>
+                                        <para>Click Next. Opens the Profile Wizard Connection</para>
+                                    </listitem>
+                                </itemizedlist>
+                                <itemizedlist>
+                                    <para>Profile Wizard Connection</para>
+                                    <listitem>
+                                        <para>Click Equipment is attached to this device. Opens Profile You Are Almost Done</para>
+                                    </listitem>
+                                    <listitem>
+                                        <para>Click Equipment is attached to this device if INDI is installed on this computer</para>
+                                    </listitem>
+                                    <listitem>
+                                        <para>Click Equipment is attached to a remote device if INDI is installed on a remote computer</para>
+                                        <itemizedlist>
+                                            <para>Profile Wizard Which Remote Device</para>
+                                            <listitem>
+                                                <para>Click Other</para>
+                                            </listitem>
+                                        </itemizedlist>
+                                        <itemizedlist>
+                                            <para>Profile Wizard Host</para>
+                                            <listitem>
+                                                <para>Type Host with IP Address of the INDI computer</para>
+                                            </listitem>
+                                            <listitem>
+                                                <para>Choose INDI Web Manager... Yes</para>
+                                            </listitem>
+                                            <listitem>
+                                                <para>Click Next</para>
+                                            </listitem>
+                                        </itemizedlist>
+                                    </listitem>
+                                </itemizedlist>
+                                <itemizedlist>
+                                    <para>Profile Wizard Almost Done</para>
+                                    <listitem>
+                                        <para>Type Profile Name. This can be altered later if required</para>
+                                    </listitem>
+                                    <listitem>
+                                        <para>Click Create Profile and Select Devices. Opens Profile Editor</para>
+                                    </listitem>
+                                </itemizedlist>
+                                <itemizedlist>
+                                    <para>Profile Editor</para>
+                                    <listitem>
+                                        <para>Select a mount</para>
+                                    </listitem>
+                                    <listitem>
+                                        <para>Select a CCD (imaging camera)</para>
+                                    </listitem>
+                                    <listitem>
+                                        <para>Click Save. Saves profile and closes the profile editor. Return to Ekos Setup module</para>
+                                    </listitem>
+                                </itemizedlist>
+                            </listitem>
+                            <listitem>
+                                <para>Click Start. Starts the drivers and opens INDI control panel</para>
+                            </listitem>
+                        </itemizedlist>
+                    </listitem>
+                    <listitem>
+                        <para>Click Mount. Opens the Mount Module.</para>
+                        <itemizedlist>
+                            <para>Mount Module</para>
+                            <listitem>
+                                <para>Click Mount Control. Opens Mount Control Tool</para>
+                                <itemizedlist>
+                                    <para>Mount Control Tool</para>
+                                    <listitem>
+                                        <para>Click Unpark. Mount unparks and starts tracking</para>
+                                    </listitem>
+                                    <listitem>
+                                        <para>Choose Type HA/DE</para>
+                                    </listitem>
+                                    <listitem>
+                                        <para>Type HA 23:00:00</para>
+                                    </listitem>
+                                    <listitem>
+                                        <para>Type DE 00:00:00</para>
+                                    </listitem>
+                                    <listitem>
+                                        <para>Click GOTO. Moves the mount 15 degrees East of the meridian at the celestial equator</para>
+                                    </listitem>
+                                </itemizedlist>
+                            </listitem>
+                        </itemizedlist>
+                    </listitem>
+                </itemizedlist>
+            </listitem>
+            <listitem>
+                <para>Click Capture. Opens the Capture Module.</para>
+                <itemizedlist>
+                    <para>Capture Module</para>
+                    <listitem>
+                        <para>Select Camera.</para>
+                    </listitem>
+                    <listitem>
+                        <para>Click Preview. Captures an image and shows it in the Image Viewer</para>
+                    </listitem>
+                </itemizedlist>
+            </listitem>
+        </itemizedlist>
+    </sect3>
+</sect2>
