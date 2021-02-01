@@ -21,26 +21,34 @@
                 </para>
             </listitem>
             <listitem>
-                <para>If INDI is installed on a remote computer, you have the IP address readily available.</para>
-            </listitem>
-            <listitem>
-                <para>If INDI is on a remote computer, Indi Web Manager is
-                    <ulink url="https://indilib.org/support/tutorials/162-indi-web-manager.html">installed</ulink>
-                    and running. This configuration is the easiest to use especially when the INDI Web manager is pre-installed.
-                </para>
+                <para>INDI is installed on a remote computer</para>
                 <itemizedlist>
-                    <para>If INDI Web Manager is not pre-installed you need to start it manually.</para>
                     <listitem>
-                        <para>Connect to the INDI computer. Use SSH or VNC as appropriate and open a terminal.</para>
+                        <para>You have the IP address of the remote computer.</para>
                     </listitem>
                     <listitem>
-                        <para>Type indi-web in the terminal to start the INDI web manager. Leave the terminal open so that indi-web keeps running.</para>
-                    </listitem>
-                    <listitem>
-                        <para>Longer term, set up INDI Web mMnager to
-                            <ulink url="https://github.com/knro/indiwebmanager/blob/master/README.md#systemd-configuration">run automatically</ulink>
-                            at system startup
+                        <para>Indi Web Manager is
+                            <ulink url="https://indilib.org/support/tutorials/162-indi-web-manager.html">installed</ulink>
+                            and running. This configuration is the easiest to use especially when the INDI Web manager is pre-installed.
                         </para>
+                        <itemizedlist>
+                            <para>If INDI Web Manager is not pre-installed you need to start it manually or set it up to run automatically.</para>
+                            <listitem>
+                                <para>We assume you have basic Linux skills to install packages, run terminal commands, edit files to get to this stage</para>
+                            </listitem>
+                            <listitem>
+                                <para>Connect to the INDI computer. Use SSH or VNC as appropriate and open a terminal.</para>
+                            </listitem>
+                            <listitem>
+                                <para>Type indi-web in the terminal to start the INDI web manager. Leave the terminal open so that indi-web keeps running.</para>
+                            </listitem>
+                            <listitem>
+                                <para>Follow the troubleshooting
+                                    <link linkend="ekos-quick-start-troubleshoot-indiweb">instructions</link>
+                                    to run INDI Web Manager automatically at system startup.
+                                </para>
+                            </listitem>
+                        </itemizedlist>
                     </listitem>
                 </itemizedlist>
             </listitem>
@@ -267,6 +275,71 @@
     </sect3>
     <sect3 id="ekos-quick-start-troubleshoot">
         <title>Troubleshooting</title>
+        <itemizedlist id="ekos-quick-start-troubleshoot-indiweb">
+            <para>Troubleshooting INDI Web Manager</para>
+            <listitem>
+                <para>INDI Web Manager does not start automatically</para>
+                <itemizedlist>
+                    <listitem>
+                        <para>If INDI Web Manager is pre-installed on your computer e.g. StellarMate, AstroBerry contact support for the product</para>
+                    </listitem>
+                    <listitem>
+                        <para>If INDI Web Manager is not pre-installed it needs to be set up to run automatically at start up</para>
+                        <itemizedlist>
+                            <listitem>
+                                <para>Connect to the INDI computer. Use SSH or VNC as appropriate. If using VNC, open a terminal after connecting</para>
+                            </listitem>
+                            <listitem>
+                                <para>Type indi-web in the terminal to start the INDI web manager. Leave the terminal open so that indi-web keeps running.</para>
+                            </listitem>
+                            <listitem>
+                                <para>Options for automatically running INDI Web Manager</para>
+                                <orderedlist>
+                                    <listitem>
+                                        <para>echo 'indi-web -v &amp;' | sudo tee -a /etc/rc.local > /dev/null</para>
+                                    </listitem>
+                                    <listitem>
+                                        <para>echo 'indi-web -v &amp;' >> ~/.bashrc</para>
+                                    </listitem>
+                                    <listitem>
+                                        <para>Set up INDI Web Manager to run automatically at system startup using systemd.
+                                        </para>
+                                        <itemizedlist>
+                                            <listitem>
+                                                <para>Refer to the detailed
+                                                    <ulink url="https://github.com/knro/indiwebmanager/blob/master/README.md#systemd-configuration">instructions</ulink>
+                                                </para>
+                                            </listitem>
+                                            <listitem>
+                                                <para>wget https://raw.githubusercontent.com/knro/indiwebmanager/master/indiwebmanager.service</para>
+                                            </listitem>
+                                            <listitem>
+                                                <para>sudo cp indiwebmanager.service /etc/systemd/system/</para>
+                                            </listitem>
+                                            <listitem>
+                                                <para>sudo chmod 644 /etc/systemd/system/indiwebmanager.service</para>
+                                            </listitem>
+                                            <listitem>
+                                                <para>sudo nano /etc/systemd/system/indiwebmanager.service</para>
+                                            </listitem>
+                                            <listitem>
+                                                <para>sudo systemctl daemon-reload</para>
+                                            </listitem>
+                                            <listitem>
+                                                <para>sudo systemctl enable indiwebmanager.service</para>
+                                            </listitem>
+                                            <listitem>
+                                                <para>sudo reboot</para>
+                                            </listitem>
+                                        </itemizedlist>
+                                    </listitem>
+                                </orderedlist>
+                            </listitem>
+                        </itemizedlist>
+                    </listitem>
+                </itemizedlist>
+            </listitem>
+        </itemizedlist>
         <itemizedlist id="ekos-quick-start-troubleshoot-geo">
             <para>Troubleshooting Geographic location</para>
             <listitem>
