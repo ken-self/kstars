@@ -290,20 +290,18 @@
                                 <para>Connect to the INDI computer. Use SSH or VNC as appropriate. If using VNC, open a terminal after connecting</para>
                             </listitem>
                             <listitem>
-                                <para>Type indi-web in the terminal to start the INDI web manager. Leave the terminal open so that indi-web keeps running.</para>
-                            </listitem>
-                            <listitem>
                                 <para>Options for automatically running INDI Web Manager</para>
                                 <orderedlist>
                                     <listitem>
+                                        <para>Start from rc.local</para>
                                         <para>echo 'indi-web -v &amp;' | sudo tee -a /etc/rc.local > /dev/null</para>
                                     </listitem>
                                     <listitem>
+                                        <para>Start from .bashrc</para>
                                         <para>echo 'indi-web -v &amp;' >> ~/.bashrc</para>
                                     </listitem>
                                     <listitem>
-                                        <para>Set up INDI Web Manager to run automatically at system startup using systemd.
-                                        </para>
+                                        <para>Set up INDI Web Manager to run automatically at system startup using systemd.</para>
                                         <itemizedlist>
                                             <listitem>
                                                 <para>Refer to the detailed
