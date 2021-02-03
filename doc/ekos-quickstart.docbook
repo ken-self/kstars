@@ -98,10 +98,10 @@
                         <itemizedlist>
                             <para>Set Geographic Location tool</para>
                             <listitem>
-                                <para>Type City filter. Use the name of your nearest large town/city. The Choose city list is filtered by your input.</para>
+                                <para>Type City filter. Use the name of your nearest city. The Choose City list is filtered by your input.</para>
                             </listitem>
                             <listitem>
-                                <para>Select city. Fills in the View/Edit Location Data with settings for the selected location.</para>
+                                <para>Select Choose City. Use your nearest city. Fills in the View/Edit Location Data with settings for the selected location.</para>
                             </listitem>
                             <listitem>
                                 <para>Click Ok. Saves all settings and closes the Set Geographic Location tool.</para>
@@ -319,6 +319,8 @@
                                             </listitem>
                                             <listitem>
                                                 <para>sudo nano /etc/systemd/system/indiwebmanager.service</para>
+                                                <para>Change the userid from "pi" to the one you use on the INDI server</para>
+                                                <para>Ctrl-O Ctrl-X to save and exit</para>
                                             </listitem>
                                             <listitem>
                                                 <para>sudo systemctl daemon-reload</para>
@@ -340,9 +342,23 @@
         </itemizedlist>
         <itemizedlist id="ekos-quick-start-troubleshoot-geo">
             <para>Troubleshooting Geographic location</para>
+        <screenshot>
+            <screeninfo>Geographic Location</screeninfo>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="kstars-tool-geo.png" format="PNG"/>
+                </imageobject>
+                <caption>
+                    <para>
+                        <phrase>KStars Geographic Location tool</phrase>
+                    </para>
+                </caption>
+            </mediaobject>
+        </screenshot>
             <listitem>
                 <para>Your nearest city/town is not in the list</para>
                 <itemizedlist>
+                <para>View/Edit Location Data group</para>
                     <listitem>
                         <para>Type Country filter. Use the full name of your country</para>
                     </listitem>
@@ -350,22 +366,22 @@
                         <para>Type Province filter. Use the full name of your second tier geopolitical region for your country</para>
                     </listitem>
                     <listitem>
-                        <para>Select filtered city. Use the city nearest to you, if any is showing</para>
+                        <para>Select Choose City. Use the city nearest to you, if any is showing</para>
                     </listitem>
                     <listitem>
-                        <para>Type city. Use your city name</para>
+                        <para>Type City. Use your city name</para>
                     </listitem>
                     <listitem>
-                        <para>Type latitude. Use your latitude</para>
+                        <para>Type Latitude. Use your latitude in the format shown</para>
                     </listitem>
                     <listitem>
-                        <para>Type longitude. Use your longitude</para>
+                        <para>Type Longitude. Use your longitude in the format shown</para>
                     </listitem>
                     <listitem>
                         <para>Select UT Offset. Hours ahead (+) or behind(-) Coordinated Universal Time excluding any Daylight Saving</para>
                     </listitem>
                     <listitem>
-                        <para>Select DST rule. Select the ISO country code that regulates Daylight Saving at your location</para>
+                        <para>Select DST rule. Select the ISO country code of the government that regulates Daylight Saving at your location</para>
                     </listitem>
                     <listitem>
                         <para>Click Add City. Adds your city to the list</para>
