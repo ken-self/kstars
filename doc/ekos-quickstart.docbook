@@ -34,7 +34,7 @@
                         <itemizedlist>
                             <para>If INDI Web Manager is not pre-installed you need to start it manually or set it up to run automatically.</para>
                             <listitem>
-                                <para>We assume you have basic Linux skills to install packages, run terminal commands, edit files to get to this stage</para>
+                                <para>We assume you have basic Linux skills to get to this stage, including: install packages, run terminal commands with sudo, edit files</para>
                             </listitem>
                             <listitem>
                                 <para>Connect to the INDI computer. Use SSH or VNC as appropriate and open a terminal.</para>
@@ -301,7 +301,7 @@
                                             <para>Set up INDI Web Manager to run automatically at system startup using systemd. This works on Ubumtu</para>
                                             <itemizedlist>
                                                 <listitem>
-                                                    <para>Refer to the detailed
+                                                    <para>Type the commands below into the terminal. Refer to the detailed
                                                         <ulink url="https://github.com/knro/indiwebmanager/blob/master/README.md#systemd-configuration">instructions</ulink>
                                                     </para>
                                                 </listitem>
@@ -310,7 +310,7 @@
                                                 </listitem>
                                                 <listitem>
                                                     <para>sed -i 's/pi/&lt;your userid&gt;/' indiwebmanager.service</para>
-                                                    <para>Change the userid from "pi" to the one you use on the INDI server</para>
+                                                    <para>Change the userid from "pi" to the one you use on the INDI server by substituting "&lt;your userid&gt;"</para>
                                                 </listitem>
                                                 <listitem>
                                                     <para>sudo cp indiwebmanager.service /etc/systemd/system/</para>
