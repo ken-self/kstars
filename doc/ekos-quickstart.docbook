@@ -275,153 +275,162 @@
     </sect3>
     <sect3 id="ekos-quick-start-troubleshoot">
         <title>Troubleshooting</title>
-        <itemizedlist id="ekos-quick-start-troubleshoot-indiweb">
-            <para>Troubleshooting INDI Web Manager</para>
-            <listitem>
-                <para>INDI Web Manager does not start automatically</para>
-                <itemizedlist>
-                    <listitem>
-                        <para>If INDI Web Manager is pre-installed on your computer e.g. StellarMate, AstroBerry contact support for the product</para>
-                    </listitem>
-                    <listitem>
-                        <para>If INDI Web Manager is not pre-installed it needs to be set up to run automatically at start up</para>
-                        <itemizedlist>
-                            <listitem>
-                                <para>Connect to the INDI computer. Use SSH or VNC as appropriate. If using VNC, open a terminal after connecting</para>
-                            </listitem>
-                            <listitem>
-                                <para>Options for automatically running INDI Web Manager</para>
-                                <orderedlist>
-                                    <listitem>
-                                        <para>Start from rc.local. This works on Raspbian</para>
-                                        <para>echo 'indi-web -v &amp;' | sudo tee -a /etc/rc.local > /dev/null</para>
-                                    </listitem>
-                                    <listitem>
-                                        <para>Set up INDI Web Manager to run automatically at system startup using systemd. This works on Ubumtu</para>
-                                        <itemizedlist>
-                                            <listitem>
-                                                <para>Refer to the detailed
-                                                    <ulink url="https://github.com/knro/indiwebmanager/blob/master/README.md#systemd-configuration">instructions</ulink>
-                                                </para>
-                                            </listitem>
-                                            <listitem>
-                                                <para>wget https://raw.githubusercontent.com/knro/indiwebmanager/master/indiwebmanager.service</para>
-                                            </listitem>
-                                            <listitem>
-                                                <para>sudo cp indiwebmanager.service /etc/systemd/system/</para>
-                                            </listitem>
-                                            <listitem>
-                                                <para>sudo chmod 644 /etc/systemd/system/indiwebmanager.service</para>
-                                            </listitem>
-                                            <listitem>
-                                                <para>sudo nano /etc/systemd/system/indiwebmanager.service</para>
-                                                <para>Change the userid from "pi" to the one you use on the INDI server</para>
-                                                <para>Ctrl-O Ctrl-X to save and exit</para>
-                                            </listitem>
-                                            <listitem>
-                                                <para>sudo systemctl daemon-reload</para>
-                                            </listitem>
-                                            <listitem>
-                                                <para>sudo systemctl enable indiwebmanager.service</para>
-                                            </listitem>
-                                            <listitem>
-                                                <para>sudo reboot</para>
-                                            </listitem>
-                                        </itemizedlist>
-                                    </listitem>
-                                </orderedlist>
-                            </listitem>
-                        </itemizedlist>
-                    </listitem>
-                </itemizedlist>
-            </listitem>
-        </itemizedlist>
-        <itemizedlist id="ekos-quick-start-troubleshoot-geo">
-            <para>Troubleshooting Geographic location</para>
-        <screenshot>
-            <screeninfo>Geographic Location</screeninfo>
-            <mediaobject>
-                <imageobject>
-                    <imagedata fileref="kstars-tool-geo.png" format="PNG"/>
-                </imageobject>
-                <caption>
-                    <para>
-                        <phrase>KStars Geographic Location tool</phrase>
-                    </para>
-                </caption>
-            </mediaobject>
-        </screenshot>
-            <listitem>
-                <para>Your nearest city/town is not in the list</para>
-                <itemizedlist>
-                <para>View/Edit Location Data group</para>
-                    <listitem>
-                        <para>Type Country filter. Use the full name of your country</para>
-                    </listitem>
-                    <listitem>
-                        <para>Type Province filter. Use the full name of your second tier geopolitical region for your country</para>
-                    </listitem>
-                    <listitem>
-                        <para>Select Choose City. Use the city nearest to you, if any is showing</para>
-                    </listitem>
-                    <listitem>
-                        <para>Type City. Use your city name</para>
-                    </listitem>
-                    <listitem>
-                        <para>Type Latitude. Use your latitude in the format shown</para>
-                    </listitem>
-                    <listitem>
-                        <para>Type Longitude. Use your longitude in the format shown</para>
-                    </listitem>
-                    <listitem>
-                        <para>Select UT Offset. Hours ahead (+) or behind(-) Coordinated Universal Time excluding any Daylight Saving</para>
-                    </listitem>
-                    <listitem>
-                        <para>Select DST rule. Select the ISO country code of the government that regulates Daylight Saving at your location</para>
-                    </listitem>
-                    <listitem>
-                        <para>Click Add City. Adds your city to the list</para>
-                    </listitem>
-                    <listitem>
-                        <para>Click Ok. Sets your city as the geographic location</para>
-                    </listitem>
-                </itemizedlist>
-            </listitem>
-        </itemizedlist>
-        <itemizedlist id="ekos-quick-start-troubleshoot-loop">
-            <para>Troubleshooting Capture Looping</para>
-            <listitem>
-                <para>Images are slow to download. This is usually due to large images downloading over a slow network</para>
-                <itemizedlist>
-                    <listitem>
-                        <para>Select Binning: H : value 2 or more. Binning: V: changes value to match.</para>
-                    </listitem>
-                    <listitem>
-                        <para>Click Preview. Captures an image with pixels binned to level given, and shows it in the Image Viewer. The image has one quarter the number of pixels at binning level 2 than binning level 1 (unbinned), one ninth at binning level 3, one sixteenth at binning level 4. The image is correspondingly fast to download.</para>
-                    </listitem>
-                    <listitem>
-                        <para>Click Reset before capturing final images to restore to unbinned capture.</para>
-                    </listitem>
-                    <listitem>
-                        <para>Type Frame: X: Use one third the default value of Size: W:</para>
-                    </listitem>
-                    <listitem>
-                        <para>Type Frame:Y: Use one third the default value of Size: H:</para>
-                    </listitem>
-                    <listitem>
-                        <para>Type Size: W: Use one third the default value of Size: W:</para>
-                    </listitem>
-                    <listitem>
-                        <para>Type Size:H: Use one third the default value of Size: H:</para>
-                    </listitem>
-                    <listitem>
-                        <para>Click Preview. Captures an image subframe of the center one third of the full frame and shows it in the Image Viewer. This is only one ninth the number of pixels and is correspondingly faster to download.</para>
-                    </listitem>
-                    <listitem>
-                        <para>Click Reset before capturing final images to restore to full frame</para>
-                    </listitem>
-                </itemizedlist>
-            </listitem>
-        </itemizedlist>
+        <sect4 id="ekos-quick-start-troubleshoot-indiweb">
+            <title>Troubleshooting INDI Web Manager</title>
+            <itemizedlist>
+                <listitem>
+                    <para>INDI Web Manager does not start automatically</para>
+                    <itemizedlist>
+                        <listitem>
+                            <para>If INDI Web Manager is pre-installed on your computer e.g. StellarMate, AstroBerry contact support for the product</para>
+                        </listitem>
+                        <listitem>
+                            <para>If INDI Web Manager is not pre-installed it needs to be set up to run automatically at start up</para>
+                            <itemizedlist>
+                                <listitem>
+                                    <para>Connect to the INDI computer. Use SSH or VNC as appropriate. If using VNC, open a terminal after connecting</para>
+                                </listitem>
+                                <listitem>
+                                    <para>Options for automatically running INDI Web Manager</para>
+                                    <orderedlist>
+                                        <listitem>
+                                            <para>Start from rc.local. This works on Raspbian</para>
+                                            <para>echo 'indi-web -v &amp;' | sudo tee -a /etc/rc.local > /dev/null</para>
+                                        </listitem>
+                                        <listitem>
+                                            <para>Set up INDI Web Manager to run automatically at system startup using systemd. This works on Ubumtu</para>
+                                            <itemizedlist>
+                                                <listitem>
+                                                    <para>Refer to the detailed
+                                                        <ulink url="https://github.com/knro/indiwebmanager/blob/master/README.md#systemd-configuration">instructions</ulink>
+                                                    </para>
+                                                </listitem>
+                                                <listitem>
+                                                    <para>wget https://raw.githubusercontent.com/knro/indiwebmanager/master/indiwebmanager.service</para>
+                                                </listitem>
+                                                <listitem>
+                                                    <para>sed -i 's/pi/&lt;your userid&gt;/' indiwebmanager.service</para>
+                                                    <para>Change the userid from "pi" to the one you use on the INDI server</para>
+                                                </listitem>
+                                                <listitem>
+                                                    <para>sudo cp indiwebmanager.service /etc/systemd/system/</para>
+                                                </listitem>
+                                                <listitem>
+                                                    <para>sudo chmod 644 /etc/systemd/system/indiwebmanager.service</para>
+                                                </listitem>
+                                                <listitem>
+                                                    <para>sudo systemctl daemon-reload</para>
+                                                </listitem>
+                                                <listitem>
+                                                    <para>sudo systemctl enable indiwebmanager.service</para>
+                                                </listitem>
+                                                <listitem>
+                                                    <para>sudo reboot</para>
+                                                </listitem>
+                                            </itemizedlist>
+                                        </listitem>
+                                    </orderedlist>
+                                </listitem>
+                            </itemizedlist>
+                        </listitem>
+                    </itemizedlist>
+                </listitem>
+            </itemizedlist>
+        </sect4>
+        <sect4 id="ekos-quick-start-troubleshoot-geo">
+            <title>Troubleshooting Geographic location</title>
+            <itemizedlist>
+                <screenshot>
+                    <screeninfo>Geographic Location</screeninfo>
+                    <mediaobject>
+                        <imageobject>
+                            <imagedata fileref="kstars-tool-geo.png" format="PNG"/>
+                        </imageobject>
+                        <caption>
+                            <para>
+                                <phrase>KStars Geographic Location tool</phrase>
+                            </para>
+                        </caption>
+                    </mediaobject>
+                </screenshot>
+                <listitem>
+                    <para>Your nearest city/town is not in the list</para>
+                    <itemizedlist>
+                        <para>View/Edit Location Data group</para>
+                        <listitem>
+                            <para>Type Country filter. Use the full name of your country</para>
+                        </listitem>
+                        <listitem>
+                            <para>Type Province filter. Use the full name of your second tier geopolitical region for your country</para>
+                        </listitem>
+                        <listitem>
+                            <para>Select Choose City. Use the city nearest to you, if any is showing</para>
+                        </listitem>
+                        <listitem>
+                            <para>Type City. Use your city name</para>
+                        </listitem>
+                        <listitem>
+                            <para>Type Latitude. Use your latitude in the format shown</para>
+                        </listitem>
+                        <listitem>
+                            <para>Type Longitude. Use your longitude in the format shown</para>
+                        </listitem>
+                        <listitem>
+                            <para>Select UT Offset. Hours ahead (+) or behind(-) Coordinated Universal Time excluding any Daylight Saving</para>
+                        </listitem>
+                        <listitem>
+                            <para>Select DST rule. Select the ISO country code of the government that regulates Daylight Saving at your location</para>
+                        </listitem>
+                        <listitem>
+                            <para>Click Add City. Adds your city to the list</para>
+                        </listitem>
+                        <listitem>
+                            <para>Click Ok. Sets your city as the geographic location</para>
+                        </listitem>
+                    </itemizedlist>
+                </listitem>
+            </itemizedlist>
+        </sect4>
+        <sect4 id="ekos-quick-start-troubleshoot-loop">
+            <title>Troubleshooting Capture Looping</title>
+            <itemizedlist>
+                <listitem>
+                    <para>Images are slow to download. This is usually due to large images downloading over a slow network</para>
+                    <itemizedlist>
+                        <para>Adjust binning to reduce the frame size. This gives a full frame with larger effective pixel size</para>
+                        <listitem>
+                            <para>Select Binning: H : value 2 or more. Binning: V: changes value to match.</para>
+                        </listitem>
+                        <listitem>
+                            <para>Click Preview. Captures an image with pixels binned to level given, and shows it in the Image Viewer. The image has one quarter the number of pixels at binning level 2 than binning level 1 (unbinned), one ninth at binning level 3, one sixteenth at binning level 4. The image is correspondingly fast to download.</para>
+                        </listitem>
+                        <listitem>
+                            <para>Click Reset before capturing final images to restore to unbinned capture.</para>
+                        </listitem>
+                    </itemizedlist>
+                    <itemizedlist>
+                        <para>Use a subframe. This gives a partial frame with original pixel size.</para>
+                        <listitem>
+                            <para>Type Frame: X: Use one third the default value of Size: W:</para>
+                        </listitem>
+                        <listitem>
+                            <para>Type Frame:Y: Use one third the default value of Size: H:</para>
+                        </listitem>
+                        <listitem>
+                            <para>Type Size: W: Use one third the default value of Size: W:</para>
+                        </listitem>
+                        <listitem>
+                            <para>Type Size:H: Use one third the default value of Size: H:</para>
+                        </listitem>
+                        <listitem>
+                            <para>Click Preview. Captures an image subframe of the center one third of the full frame and shows it in the Image Viewer. This is only one ninth the number of pixels and is correspondingly faster to download.</para>
+                        </listitem>
+                        <listitem>
+                            <para>Click Reset before capturing final images to restore to full frame</para>
+                        </listitem>
+                    </itemizedlist>
+                </listitem>
+            </itemizedlist>
+        </sect4>
     </sect3>
 </sect2>
