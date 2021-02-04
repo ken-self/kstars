@@ -5,7 +5,7 @@
         <secondary>Ekos</secondary>
         <tertiary>Quick Start</tertiary>
     </indexterm>
-    <para>This quick start guide helps you to take your first image with Ekos. Start by making sure you have met the
+    <para>This quick start guide helps you to take your first image with Ekos. Start by making sure you fulfil the
         <link linkend="ekos-quick-start-prereq">pre-requisites</link>
         . Then follow the step-by-step
         <link linkend="ekos-quick-start-instruct">instructions</link>

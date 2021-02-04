@@ -117,5 +117,5 @@
         </mediaobject>
     </screenshot>
 -->
-    &tool-ekos-quickstart; &tool-ekos-user-interface; &tool-ekos-setup; &tool-ekos-profile-wizard; &tool-ekos-profile-editor; &tool-ekos-logs; &tool-ekos-capture; &tool-ekos-focus; &tool-ekos-guide; &tool-ekos-align; &tool-ekos-scheduler; &tool-ekos-analyze; &tool-ekos-tutorials;
+    &tool-ekos-quickstart; &tool-ekos-user-interface; &tool-ekos-setup; &tool-ekos-profile-wizard; &tool-ekos-logs; &tool-ekos-capture; &tool-ekos-focus; &tool-ekos-guide; &tool-ekos-align; &tool-ekos-scheduler; &tool-ekos-analyze; &tool-ekos-tutorials;
 </sect1>

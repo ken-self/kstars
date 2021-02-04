@@ -22,39 +22,33 @@
         <varlistentry>
             <term>Profiles</term>
             <listitem>
-                <para>
-                    You define profiles for your equipment and their connection mode using the <guilabel>Profile Editor</guilabel>. Ekos comes pre-installed with the <guimenuitem>Simulators</guimenuitem> profile which is used to connect to simulator devices to demonstrate Ekos functions:
+                <para>You define profiles for your equipment and their connection mode using the
+                    <guilabel>Profile Editor</guilabel>
+                    . Ekos comes pre-installed with the
+                    <guimenuitem>Simulators</guimenuitem>
+                    profile which is used to connect to simulator devices to demonstrate Ekos functions:
                 </para>
                 <itemizedlist>
                     <listitem>
-                        <para>
-                           The INDI service runs on a either local or remote computer. Local mode is when INDI Server is running on the same machine as Ekos and all the devices are connected directly to that machine. Remote mode is when INDI server runs on a different machine (for example, on a Raspberry PI) and you need to set the INDI server host and port in Ekos.
+                        <para>The INDI service runs on a either local or remote computer. Local mode is when INDI Server is running on the same machine as Ekos and all the devices are connected directly to that machine. Remote mode is when INDI server runs on a different machine (for example, on a Raspberry PI) and you need to set the INDI server host and port in Ekos.</para>
+                    </listitem>
+                    <listitem>
+                        <para>Ekos provides an option to automaticallly connects to all devices in the profile after INDI server is started. Do not use the Auto Connect option if you want to make changes to the driver settings before connecting to them &eg; baud rate or IP address. If the auto-connect option is not used then you manually connect to each driver with the INDI control panel.</para>
+                    </listitem>
+                    <listitem>
+                        <para>The Site Info option is used when connecting to a remote geographic site so that Ekos is in sync with the location coordinates and time. Ekos loads the
+                            <emphasis role="bold">current</emphasis>
+                            city and timezone whenever Ekos is started with this profile.
                         </para>
                     </listitem>
                     <listitem>
-                        <para>
-                          The Auto Connect option automaticallly connects to all devices in the profile after INDI server is started. Do not use the Auto Connect option if you want to make changes to the driver settings before connecting to them &eg; baud rate or IP address. Manually connect to each driver with the INDI control panel.
-                        </para>
+                        <para>Ekos works with several auto-guiding applications. Ekos uses its internal Guide module by default; or it can use an external auto-guiding tool: PHD2 or LinGuider.</para>
                     </listitem>
                     <listitem>
-                        <para>
-                            The Site Info option is used when connecting to a remote geographic site so that Ekos is in sync with the location coordinates and time. Ekos loads the <emphasis role="bold">current</emphasis> city and timezone whenever Ekos is started with this profile.
-                        </para>
+                        <para>The profile tool lets you save the profile in INDI Web Manager so that the remote INDI drivers used in the profile are started whenever the profile is started.</para>
                     </listitem>
                     <listitem>
-                        <para>
-                            <guilabel>Guiding</guilabel>: Select which Guide application you want to use for guiding. By default, the Ekos internal Guide Module is utilized. External guiders include PHD2 and LinGuider.
-                        </para>
-                    </listitem>
-                    <listitem>
-                        <para>
-                            INDI Web Manager option is used when INDI Web Manager is running on the INDI Server. It connects to the INDI Web Manager when the profile starts and uses it to start the INDI drivers in the profile.
-                        </para>
-                    </listitem>
-                    <listitem>
-                        <para>
-                            <guilabel>Device Selection</guilabel>: Select your devices from each category. Please note that if you have a CCD with a guide head, you can leave the guider drop-down menu <emphasis>blank</emphasis> as Ekos will auto-detect the guide head from the CCD camera. Similarly, if your CCD includes embedded filter wheel support, then you do <emphasis>not</emphasis> need to specify the filter wheel device in the filter drop-down menu.
-                        </para>
+                        <para>INDI supports imaging cameras with embedded guide head and/or filter wheel. The imaging camera driver incorporates the guide camera driver and/or filter wheel driver</para>
                     </listitem>
                 </itemizedlist>
             </listitem>
@@ -62,19 +56,16 @@
         <varlistentry>
             <term>Start &amp; Stop INDI</term>
             <listitem>
-                <para>
-                    Start and Stop INDI services. Once INDI server is established, INDI Control Panel will be displayed. Here you can change some driver options such as which port the device is connected to &etc;
-                </para>
+                <para>Start and Stop INDI services. Once INDI server is established, the INDI Control Panel is displayed. Here you can change some driver options such as which port the device is connected to &etc;</para>
             </listitem>
         </varlistentry>
         <varlistentry>
             <term>Connect &amp; Disconnect Devices</term>
             <listitem>
-                <para>
-                    Connect to INDI server. Based on the devices connected, Ekos modules (CCD, Focus, Guide, &etc;) will be established and available to use.
-                </para>
-                <para>
-                    Once you are ready, click <guibutton>Start INDI</guibutton> to establish INDI server and connection to your equipment. Ekos shall create the various module icons (Mount, Capture, Focus, &etc;) as the connection is established with the device.
+                <para>Connect to INDI server. Based on the devices connected, Ekos modules (CCD, Focus, Guide, &etc;) will be established and available to use.</para>
+                <para>Once you are ready, click
+                    <guibutton>Start INDI</guibutton>
+                    to establish INDI server and connection to your equipment. Ekos shall create the various module icons (Mount, Capture, Focus, &etc;) as the connection is established with the device.
                 </para>
             </listitem>
         </varlistentry>
@@ -89,19 +80,303 @@
                         <para>Profile: Select the profile to use in Ekos</para>
                     </listitem>
                     <listitem>
-                        <para>Plus: Click to create a new profile</para>
+                        <para>Plus: Click to create a new profile. Opens the profile Editor Tool with empty or default settings</para>
                     </listitem>
                     <listitem>
-                        <para>Pencil: Click to edit the slected profile</para>
+                        <para>Pencil: Click to edit the selected profile. Opens the Profile Editor tool with current profile settings</para>
+                        <itemizedlist>
+                            <para>Profile Editor tool</para>
+                            <screenshot>
+                                <screeninfo>Profile Editor</screeninfo>
+                                <mediaobject>
+                                    <imageobject>
+                                        <imagedata fileref="profile_editor.png" format="PNG"/>
+                                    </imageobject>
+                                    <textobject>
+                                        <phrase>Profile Editor</phrase>
+                                    </textobject>
+                                </mediaobject>
+                            </screenshot>
+                            <listitem>
+                                <para>Profile group</para>
+                                <itemizedlist>
+                                    <listitem>
+                                        <para>Type Name: Use a name that uniquely identifies the profile.</para>
+                                    </listitem>
+                                    <listitem>
+                                        <para>Tick Auto Connect if you want to automatically connect to all devices in the profile when it is opened.</para>
+                                    </listitem>
+                                    <listitem>
+                                        <para>Tick Site Info if you are connecting to a remot observatory</para>
+                                    </listitem>
+                                    <listitem>
+                                        <para>Choose Mode</para>
+                                        <itemizedlist>
+                                            <listitem>
+                                                <para>Choose Local if INDI is running on the same computer as Ekos. Ekos manages the INDI server.</para>
+                                            </listitem>
+                                            <listitem>
+                                                <para>Choose Remote if INDI is running on a different computer to Ekos or you want to manage the INDI server with INDI Web Manager.</para>
+                                            </listitem>
+                                        </itemizedlist>
+                                    </listitem>
+                                    <listitem>
+                                        <para>Type Host if Mode is Remote. Use the IP address of the INDI computer or localhost if it the same as the Ekos computer</para>
+                                    </listitem>
+                                    <listitem>
+                                        <para>Type Port if Mode is Remote. Use the TCP port on which INDI listens for commands. Default is 7624.</para>
+                                    </listitem>
+                                    <listitem>
+                                        <para>Select Guiding using your preferred autoguiding application.</para>
+                                    </listitem>
+                                    <listitem>
+                                        <para>Type Host if you are not using the Internal autoguiding tool. Use the IP address of the computer where your auto-guiding appliction runs. The default is localhost which means the auto-guider runs on the same computer as Ekos</para>
+                                    </listitem>
+                                    <listitem>
+                                        <para>Type Port if you are not using the Internal auto-guiding tool. Use the TCP port on which the auto-guiding application listens for commands. PHD2 listens on port 4400 y default.</para>
+                                    </listitem>
+                                    <listitem>
+                                        <para>Tick INDI Web Manager if Mode is Remote and you want to save the profile on INDI Web Manager</para>
+                                    </listitem>
+                                    <listitem>
+                                        <para>Click Web Manager to open INDI Web Manager in a browser</para>
+                                    </listitem>
+                                    <listitem>
+                                        <para>Type Port using the TCP port on which INDI Web manager listens for commands. Default is 8624.</para>
+                                    </listitem>
+                                    <listitem>
+                                        <para>Click INDIhub to configure INDI Hub</para>
+                                    </listitem>
+                                    <listitem>
+                                        <para>Click Scan to scan the local computer for INDI Web Manager.</para>
+                                    </listitem>
+                                </itemizedlist>
+                            </listitem>
+                            <listitem>
+                                <para>Select Devices group</para>
+                                <itemizedlist>
+                                    <listitem>
+                                        <para>Select Mount. Use the driver that matches your mount</para>
+                                    </listitem>
+                                    <listitem>
+                                        <para>Select CCD. Use the imaging camera driver that matches your imaging camera</para>
+                                    </listitem>
+                                    <listitem>
+                                        <para>Select Guider. Use the camera driver that matches you guide camera. If you are using an imaging camera with an embedded guide head, you do not need to select the Guide Camera driver. The imaging camera driver incorporates the guide camera driver.</para>
+                                    </listitem>
+                                    <listitem>
+                                        <para>Select Focuser. Use the driver that matches your electronic focuser.</para>
+                                    </listitem>
+                                    <listitem>
+                                        <para>Select Filter. Use the filter wheel driver that matches your filter wheel. If you are using an imaging camera with an embedded filter wheel, you do not need to select the Filter Wheel driver. The imaging camera driver incorporates the filter wheel driver.</para>
+                                    </listitem>
+                                    <listitem>
+                                        <para>Select AO. Use the driver that matches your adaptive optics device</para>
+                                    </listitem>
+                                    <listitem>
+                                        <para>Select Dome. Use the driver that matches your dome automation</para>
+                                    </listitem>
+                                    <listitem>
+                                        <para>Select Weather</para>
+                                    </listitem>
+                                    <listitem>
+                                        <para>Select Aux 1</para>
+                                    </listitem>
+                                    <listitem>
+                                        <para>Select Aux 2</para>
+                                    </listitem>
+                                    <listitem>
+                                        <para>Select Aux 3</para>
+                                    </listitem>
+                                    <listitem>
+                                        <para>Select Aux 4</para>
+                                    </listitem>
+                                </itemizedlist>
+                            </listitem>
+                            <listitem>
+                                <para>Click Save to save the profile and return to the Setup window</para>
+                            </listitem>
+                            <listitem>
+                                <para>Click Close to return to the Setup window without saving the profile.</para>
+                            </listitem>
+                        </itemizedlist>
                     </listitem>
                     <listitem>
-                        <para>Minus: Click to delete the selected profile</para>
+                        <para>Click Minus to delete the selected profile</para>
                     </listitem>
                     <listitem>
-                        <para>Dice: Click to open Custom Drivers tool</para>
+                        <para>Click Dice to open Custom Drivers tool</para>
                     </listitem>
                     <listitem>
-                        <para>Wand: Click to open Profile Wizard tool</para>
+                        <para>Click Wand to open Profile Wizard tool</para>
+                        <itemizedlist>
+                            <para>Profile Wizard Welcome</para>
+                            <listitem>
+                                <para>Click Next. Opens the Profile Wizard Connection</para>
+                            </listitem>
+                            <listitem>
+                                <para>Click What is INDI. Opens the Discover INDI Library web page in your browser</para>
+                            </listitem>
+                            <listitem>
+                                <para>Click Discover Ekos. Opens the About/Ekos web page in your browser</para>
+                            </listitem>
+                            <listitem>
+                                <para>Click Video Tutorials. Opens the Kuwait Astronomy channel on Youtube in your browser</para>
+                            </listitem>
+                            <listitem>
+                                <para>Click Help. Opens the KDE Docs page in your browser</para>
+                            </listitem>
+                            <listitem>
+                                <para>Click Reset. Return to Profile Wizard Welcome</para>
+                            </listitem>
+                            <listitem>
+                                <para>Click Close. Close the Profile Wizard without saving</para>
+                            </listitem>
+                        </itemizedlist>
+                        <itemizedlist>
+                            <para>Profile Wizard Connection</para>
+                            <listitem>
+                                <para>Click Equipment is attached to this device if INDI is installed on this computer. Opens Profile wizard You Are Almost Done</para>
+                            </listitem>
+                            <listitem>
+                                <para>Click Equipment is attached to a remote device if INDI is installed on a remote computer. Opens Profile Wizard Which Remote Device</para>
+                            </listitem>
+                            <listitem>
+                                <para>Click Help. Opens the KDE Docs page in your browser</para>
+                            </listitem>
+                            <listitem>
+                                <para>Click Reset. Return to Profile Wizard Welcome</para>
+                            </listitem>
+                            <listitem>
+                                <para>Click Close. Close the Profile Wizard without saving</para>
+                            </listitem>
+                        </itemizedlist>
+                        <itemizedlist>
+                            <para>Profile Wizard Which Remote Device</para>
+                            <listitem>
+                                <para>Click Stellarmate. Opens Profile Wizard Host to collect INDI server settings</para>
+                            </listitem>
+                            <listitem>
+                                <para>Click AtikBase. Opens Profile Wizard Host to collect INDI server settings</para>
+                            </listitem>
+                            <listitem>
+                                <para>Click Other. Opens Profile Wizard Host Other to collect INDI server settings</para>
+                            </listitem>
+                            <listitem>
+                                <para>Click Help. Opens the KDE Docs page in your browser</para>
+                            </listitem>
+                            <listitem>
+                                <para>Click Reset. Return to Profile Wizard Welcome</para>
+                            </listitem>
+                            <listitem>
+                                <para>Click Close. Close the Profile Wizard without saving</para>
+                            </listitem>
+                        </itemizedlist>
+                        <itemizedlist>
+                            <para>Profile Wizard Host</para>
+                            <listitem>
+                                <para>Type Host using the IP Address of the remote INDI computer</para>
+                            </listitem>
+                            <listitem>
+                                <para>Click Autodetect to scan for an INDI Web manger at the Host IP Address</para>
+                            </listitem>
+                            <listitem>
+                                <para>Click Next. Opens Profile wizard You Are Almost Done</para>
+                            </listitem>
+                            <listitem>
+                                <para>Click Help. Opens the KDE Docs page in your browser</para>
+                            </listitem>
+                            <listitem>
+                                <para>Click Reset. Return to Profile Wizard Welcome</para>
+                            </listitem>
+                            <listitem>
+                                <para>Click Close. Close the Profile Wizard without saving</para>
+                            </listitem>
+                        </itemizedlist>
+                        <itemizedlist>
+                            <para>Profile Wizard Host Other</para>
+                            <listitem>
+                                <para>Type Host using the IP Address of the remote INDI computer</para>
+                            </listitem>
+                            <listitem>
+                                <para>Type Port using the TCP Port on which INDI Server is listening</para>
+                            </listitem>
+                            <listitem>
+                                <para>Choose INDI Web Manager... to decide how Ekos manages INDI drivers</para>
+                                <itemizedlist>
+                                    <listitem>
+                                        <para>Choose Yes, so that Ekos uses INDI Web Manager to manage INDI drivers</para>
+                                    </listitem>
+                                    <listitem>
+                                        <para>Choose No, so that INDI drivers are managed outside of Ekos</para>
+                                    </listitem>
+                                    <listitem>
+                                        <para>Choose Not Sure, so that INDI drivers are managed outside of Ekos</para>
+                                    </listitem>
+                                </itemizedlist>
+                            </listitem>
+                            <listitem>
+                                <para>Click Next. Opens Profile wizard You Are Almost Done</para>
+                            </listitem>
+                            <listitem>
+                                <para>Click Help. Opens the KDE Docs page in your browser</para>
+                            </listitem>
+                            <listitem>
+                                <para>Click Reset. Return to Profile Wizard Welcome</para>
+                            </listitem>
+                            <listitem>
+                                <para>Click Close. Close the Profile Wizard without saving</para>
+                            </listitem>
+                        </itemizedlist>
+                        <itemizedlist>
+                            <para>Profile Wizard Almost Done</para>
+                            <listitem>
+                                <para>Type Profile Name. Identifes the profile. This can be altered later if required</para>
+                            </listitem>
+                            <listitem>
+                                <para>Choose Autoguider</para>
+                                <itemizedlist>
+                                    <listitem>
+                                        <para>Choose Internal if you want Ekos to use its internal guider (recommended)</para>
+                                    </listitem>
+                                    <listitem>
+                                        <para>Choose PHD2 if you want Ekos to use the PHD2 autoguider</para>
+                                    </listitem>
+                                    <listitem>
+                                        <para>Choose LinGuider if you want Ekos to use the Linguider autoguider</para>
+                                    </listitem>
+                                </itemizedlist>
+                            </listitem>
+                            <listitem>
+                                <itemizedlist>
+                                    <para>Additional Services</para>
+                                    <listitem>
+                                        <para>Tick Joystick</para>
+                                    </listitem>
+                                    <listitem>
+                                        <para>Tick Remote Astrometry</para>
+                                    </listitem>
+                                    <listitem>
+                                        <para>Tick Watch Dog</para>
+                                    </listitem>
+                                    <listitem>
+                                        <para>Tick Sky Safari</para>
+                                    </listitem>
+                                </itemizedlist>
+                            </listitem>
+                            <listitem>
+                                <para>Click Create Profile and Select Devices. Opens Profile Editor</para>
+                            </listitem>
+                            <listitem>
+                                <para>Click Help. Opens the KDE Docs page in your browser</para>
+                            </listitem>
+                            <listitem>
+                                <para>Click Reset. Return to Profile Wizard Welcome</para>
+                            </listitem>
+                            <listitem>
+                                <para>Click Close. Close the Profile Wizard without saving</para>
+                            </listitem>
+                        </itemizedlist>
                     </listitem>
                 </itemizedlist>
             </listitem>
