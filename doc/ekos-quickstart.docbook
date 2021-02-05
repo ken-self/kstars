@@ -189,6 +189,10 @@
                             <listitem>
                                 <para>Minimize the INDI control panel. It is not needed for Quick Start.</para>
                             </listitem>
+                            <listitem>
+                                <para>Refer to the chapter on <link linkend="ekos-capture">Ekos Capture Module</link> for more information</para>
+                            </listitem>
+
                         </itemizedlist>
                     </listitem>
                     <listitem>

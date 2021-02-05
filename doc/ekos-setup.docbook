@@ -42,6 +42,11 @@
                         </para>
                     </listitem>
                     <listitem>
+    <para>
+        The Profile Wizard is a handy tool to setup your equipment for the first time. It should popup automatically the first time you run &kstars;. Follow the guided instructions to setup your first equipment profile.
+    </para>
+                    </listitem>
+                    <listitem>
                         <para>Ekos works with several auto-guiding applications. Ekos uses its internal Guide module by default; or it can use an external auto-guiding tool: PHD2 or LinGuider.</para>
                     </listitem>
                     <listitem>
@@ -209,7 +214,7 @@
                     </listitem>
                     <listitem>
                         <para>Click Wand to open Profile Wizard tool</para>
-                        <itemizedlist>
+                        <itemizedlist id="ekos-profile-wizard">
                             <para>Profile Wizard Welcome</para>
                             <listitem>
                                 <para>Click Next. Opens the Profile Wizard Connection</para>
