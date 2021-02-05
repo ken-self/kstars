@@ -37,6 +37,7 @@
             <term>Setup Module</term>
             <listitem>
                 <para>This is where you create and manage your equipment profile, and connect to your devices. It also provides a summary view where the capture progress along with the focus and guide operations is displayed in a compact format to convey the most important information relevant to the user.</para>
+                <para>Read <link linkend="ekos-setup">more...</link></para>
                 <itemizedlist>
                     <listitem>
                         <para>Control your telescope, camera, filter wheel, focuser, guider, adaptive optics unit, and any INDI-compatible auxiliary device.</para>
@@ -69,12 +70,14 @@
                     <guilabel>Analyze</guilabel>
                     also can display data from the current imaging session.
                 </para>
+                <para>Read <link linkend="ekos-analyze">more...</link></para>
             </listitem>
         </varlistentry>
         <varlistentry>
             <term>Scheduler Module</term>
             <listitem>
                 <para>The Scheduler module facilitates the complete observation process. It enables you to select multiple targets, specify which conditions and requirements to be met, and what frames are required for capture. Afterwards the scheduler intelligently calculates the best observation time for each object and then proceed to control the complete observatory from startup to shutdown.</para>
+                <para>Read <link linkend="ekos-scheduler">more...</link></para>
                 <itemizedlist>
                     <listitem>
                         <para>Completely automated scheduler to control all your observatory equipment, select the best targets for imaging given current conditions and constraints, monitor weather conditions, and capture your data while you are away!</para>
@@ -101,6 +104,7 @@
             <term>Capture Module</term>
             <listitem>
                 <para>This is the primary module for camera and filter wheel control. Create imaging sequences, capture previews, and watch video streams. It supports rotator control and can automatically capture flat frames in a number of scenarios.</para>
+                <para>Read <link linkend="ekos-capture">more...</link></para>
                 <itemizedlist>
                     <listitem>
                         <para>Powerful sequence queue for batch capture of images with optional prefixes, timestamps, filter wheel selection, and much more!</para>
@@ -133,6 +137,7 @@
             <term>Focus Module</term>
             <listitem>
                 <para>Measure the sharpness of your images in the focus module by calculating Half-Flux-Radius. The lower the HFR, the sharper the image becomes. You can run the focus module with or without a focuser. With an electronic focuser, you can run an autofocus operation where Ekos iterates and calculates the optical focus position.</para>
+                <para>Read <link linkend="ekos-focus">more...</link></para>
                 <itemizedlist>
                     <listitem>
                         <para>Auto and manual focus modes using Half-Flux-Radius (HFR) method.</para>
@@ -144,6 +149,7 @@
             <term>Guide Module</term>
             <listitem>
                 <para>guiding is necessary for long exposure astrophotography, to ensure the image is locked and stabilized for the complete duration of the exposure. Deviations from the frame with time can lead to blurry images and star trails. The guide module can automatically select a suitable guide star and lock the mount to keep that star in its position. If the guide module detects any deviation from this locked position, it sends correction pulses to the mount to bring it back to the original position.</para>
+                <para>Read <link linkend="ekos-guide">more...</link></para>
                 <itemizedlist>
                     <listitem>
                         <para>
@@ -161,8 +167,8 @@
             <listitem>
                 <para>Ekos Alignment Module enables highly accurate GOTOs to within sub-arcseconds accuracy and can measure and correct polar alignment errors. This is possible thanks to the astrometry.net solver. Ekos begins by capturing an image of a star field, feeding that image to
                     <ulink url="http://www.astrometry.net">astrometry.net</ulink>
-                    solver, and getting the central coordinates (RA, DEC) of the image. The solver essentially performs a pattern recognition against a catalog of millions of stars. Once the coordinates are determined, the true pointing of the telescope is known.
-                </para>
+                    solver, and getting the central coordinates (RA, DEC) of the image. The solver essentially performs a pattern recognition against a catalog of millions of stars. Once the coordinates are determined, the true pointing of the telescope is known.</para>
+                <para>Read <link linkend="ekos-align">more...</link></para>
                 <itemizedlist>
                     <listitem>
                         <para>Measure and Correct Polar Alignment errors using astrometry.net solver.</para>
@@ -189,6 +195,7 @@
             <term>Mount Module</term>
             <listitem>
                 <para>Mount control can be either done via the Sky Map interactively or via the Mount Control Panel in the mount module. Configure telescope properties (focal length and aperture) for both your primary imaging telescope and guide scope. However, it is recommended to select the telescopes in the equipment profile and not change the values directly in the mount module.</para>
+                <para>Read <link linkend="ekos-mount">more...</link></para>
             </listitem>
         </varlistentry>
     </variablelist>
@@ -203,5 +210,5 @@
             </textobject>
         </mediaobject>
     </screenshot>
--->&tool-ekos-quickstart; &tool-ekos-setup; &tool-ekos-logs; &tool-ekos-capture; &tool-ekos-focus; &tool-ekos-guide; &tool-ekos-align; &tool-ekos-scheduler; &tool-ekos-analyze; &tool-ekos-tutorials;
+-->&tool-ekos-quickstart; &tool-ekos-setup; &tool-ekos-logs; &tool-ekos-capture; &tool-ekos-focus; &tool-ekos-guide; &tool-ekos-align; &tool-ekos-scheduler; &tool-ekos-analyze; &tool-ekos-mount; &tool-ekos-tutorials;
 </sect1>

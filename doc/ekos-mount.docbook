@@ -1,0 +1,183 @@
+<sect2 id="ekos-mount">
+    <title>Ekos Mount</title>
+    <indexterm>
+        <primary>Tools</primary>
+        <secondary>Ekos</secondary>
+        <tertiary>Mount</tertiary>
+    </indexterm>
+    <screenshot>
+        <screeninfo>Ekos Mount</screeninfo>
+        <mediaobject>
+            <imageobject>
+                <imagedata fileref="ekos_mount.png" format="PNG"/>
+            </imageobject>
+            <textobject>
+                <phrase>Ekos Mount</phrase>
+            </textobject>
+        </mediaobject>
+    </screenshot>
+    <para>Mount control can be either done via the Sky Map interactively or via the Mount Control Panel in the mount module. Configure telescope properties (focal length and aperture) for both your primary imaging telescope and guide scope. However, it is recommended to select the telescopes in the equipment profile and not change the values directly in the mount module.</para>
+    <sect3 id="mount-operation">
+        <title>Using the Mount Module</title>
+        <itemizedlist>
+            <listitem>
+                <para>Mount group</para>
+                <itemizedlist>
+                    <listitem>
+                        <para>Aperture (mm): Select the profile to use in Ekos</para>
+                    </listitem>
+                    <listitem>
+                        <para>Focal length (mm): Select the profile to use in Ekos</para>
+                    </listitem>
+                </itemizedlist>
+            </listitem>
+            <listitem>
+                <para>Mount guide scope group</para>
+                <itemizedlist>
+                    <listitem>
+                        <para>Aperture (mm): Select the profile to use in Ekos</para>
+                    </listitem>
+                    <listitem>
+                        <para>Focal length (mm): Select the profile to use in Ekos</para>
+                    </listitem>
+                </itemizedlist>
+            </listitem>
+            <listitem>
+                <para>Mount Control</para>
+            </listitem>
+            <listitem>
+                <para>Tracking group</para>
+                <itemizedlist>
+                    <listitem>
+                        <para>On</para>
+                    </listitem>
+                    <listitem>
+                        <para>Off</para>
+                    </listitem>
+                </itemizedlist>
+            </listitem>
+            <listitem>
+                <para>Configurations</para>
+            </listitem>
+            <listitem>
+                <para>Name</para>
+            </listitem>
+            <listitem>
+                <para>Save Telescope Info</para>
+            </listitem>
+            <listitem>
+                <para>Coordinates group</para>
+                <itemizedlist>
+                    <listitem>
+                        <para>RA</para>
+                    </listitem>
+                    <listitem>
+                        <para>DE</para>
+                    </listitem>
+                    <listitem>
+                        <para>AZ</para>
+                    </listitem>
+                    <listitem>
+                        <para>AL</para>
+                    </listitem>
+                    <listitem>
+                        <para>HA</para>
+                    </listitem>
+                    <listitem>
+                        <para>LST</para>
+                    </listitem>
+                </itemizedlist>
+            </listitem>
+            <listitem>
+                <para>Parking group</para>
+                <itemizedlist>
+                    <listitem>
+                        <para>Park</para>
+                    </listitem>
+                    <listitem>
+                        <para>Unpark</para>
+                    </listitem>
+                </itemizedlist>
+            </listitem>
+            <listitem>
+                <para>Meridian Flip group</para>
+                <itemizedlist>
+                    <listitem>
+                        <para>Flip if HA ></para>
+                    </listitem>
+                    <listitem>
+                        <para>HA</para>
+                    </listitem>
+                    <listitem>
+                        <para>Units</para>
+                        <itemizedlist>
+                            <listitem>
+                                <para>Hours</para>
+                            </listitem>
+                            <listitem>
+                                <para>Degrees</para>
+                            </listitem>
+                        </itemizedlist>
+                    </listitem>
+                    <listitem>
+                        <para>Pierside</para>
+                    </listitem>
+                </itemizedlist>
+            </listitem>
+            <listitem>
+                <para>Reset group</para>
+                <itemizedlist>
+                    <listitem>
+                        <para>Clear model</para>
+                    </listitem>
+                    <listitem>
+                        <para>Clear parking</para>
+                    </listitem>
+                    <listitem>
+                        <para>Purge all configurations</para>
+                    </listitem>
+                </itemizedlist>
+            </listitem>
+            <listitem>
+                <para>Limits group</para>
+                <itemizedlist>
+                    <listitem>
+                        <para>Min. Alt</para>
+                    </listitem>
+                    <listitem>
+                        <para>Max. Alt</para>
+                    </listitem>
+                    <listitem>
+                        <para>Enable alt limits</para>
+                    </listitem>
+                    <listitem>
+                        <para>Max HA (hours)</para>
+                    </listitem>
+                    <listitem>
+                        <para>Enable HA limit</para>
+                    </listitem>
+                </itemizedlist>
+            </listitem>
+            <listitem>
+                <para>Auto Park group</para>
+                <itemizedlist>
+                    <listitem>
+                        <para>Park At</para>
+                    </listitem>
+                    <listitem>
+                        <para>Click Every day: Automatically starts the park timer on startup</para>
+                    </listitem>
+                </itemizedlist>
+            </listitem>
+            <listitem>
+                <para>Count down to auto park</para>
+            </listitem>
+            <listitem>
+                <para>Start timer: Manually starts the park timer</para>
+            </listitem>
+            <listitem>
+                <para>Stop timer: Stops the park timer</para>
+            </listitem>
+        </itemizedlist>
+    </sect3>
+</sect2>
