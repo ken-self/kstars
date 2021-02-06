@@ -6,21 +6,18 @@
     </indexterm>
     <para>
         <emphasis role="bold">Ekos</emphasis>
-        is an advanced observatory control and automation tool with a particular focus on Astrophotography. It is based on a modular extensible framework to perform common astrophotography tasks.
+        is an advanced observatory control and automation tool with a particular focus on astrophotography.
     </para>
+    <para>If you want to dive straight in, try the <link linkend="ekos-quick-start">Quick Start Guide</link>.</para>
     <para>
         <emphasis role="bold">Ekos</emphasis>
         is integrated with
         <ulink url="http://edu.kde.org/kstars">&kstars;</ulink>
-        and both are already included with several INDI based devices like
+        and both are pre-installed on several INDI based devices like
         <ulink url="https://www.stellarmate.com/component/jdownloads/category/2-ekos.html?Itemid=507">StellarMate</ulink>
         . It can be installed on &Linux;, &MacOS;, and &Windows; computers.
     </para>
-    <para>Ekos Astrophotography Tool is organized into several
-        <emphasis>Modules</emphasis>
-        . A module is a set of functions and tasks for a particular step in astrophotography and/or data acquisition.
-    </para>
-    <para>Each module has its own tab and icon in the graphical user interface as illustrated in the screenshot below:</para>
+    <para>Each module of Ekos is opened by clicking its icon on the Ekos Toolbar.</para>
     <screenshot>
         <screeninfo>Ekos Toolbar</screeninfo>
         <mediaobject>
@@ -28,7 +25,7 @@
                 <imagedata fileref="ekos_module_toolbar.png" format="PNG"/>
             </imageobject>
             <textobject>
-                <phrase>Ekos Module Toolbar</phrase>
+                <phrase>Ekos Toolbar</phrase>
             </textobject>
         </mediaobject>
     </screenshot>
@@ -36,7 +33,7 @@
         <varlistentry>
             <term>Setup Module</term>
             <listitem>
-                <para>This is where you create and manage your equipment profile, and connect to your devices. It also provides a summary view where the capture progress along with the focus and guide operations is displayed in a compact format to convey the most important information relevant to the user.</para>
+                <para>The Setup Module is where you create and manage your equipment profile, and connect to your devices. It also provides a summary view where the capture progress along with the focus and guide operations is displayed in a compact format to convey the most important information relevant to the user.</para>
                 <para>Read <link linkend="ekos-setup">more...</link></para>
                 <itemizedlist>
                     <listitem>
@@ -60,7 +57,7 @@
         <varlistentry>
             <term>Analyze Module</term>
             <listitem>
-                <para>The Analyze Module records and displays what happened in an imaging session. That is, it does not control any if your imaging, but rather reviews what occurred. Sessions are stored in an
+                <para>The Analyze Module records and displays what happened in an imaging session. That is, it does not control any of your imaging, but rather reviews what occurred. Sessions are stored in an
                     <filename class="directory">analyze</filename>
                     folder, a sister folder to the main logging folder. The
                     <filename>.analyze</filename>
@@ -210,5 +207,5 @@
             </textobject>
         </mediaobject>
     </screenshot>
--->&tool-ekos-quickstart; &tool-ekos-setup; &tool-ekos-logs; &tool-ekos-capture; &tool-ekos-focus; &tool-ekos-guide; &tool-ekos-align; &tool-ekos-scheduler; &tool-ekos-analyze; &tool-ekos-mount; &tool-ekos-tutorials;
+-->&tool-ekos-quickstart; &tool-ekos-setup; &tool-ekos-capture; &tool-ekos-focus; &tool-ekos-guide; &tool-ekos-align; &tool-ekos-scheduler; &tool-ekos-analyze; &tool-ekos-mount; &tool-ekos-tutorials;
 </sect1>

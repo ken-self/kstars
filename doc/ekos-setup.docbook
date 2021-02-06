@@ -53,6 +53,9 @@
                     <listitem>
                         <para>INDI supports imaging cameras with embedded guide head and/or filter wheel. The imaging camera driver incorporates the guide camera driver and/or filter wheel driver</para>
                     </listitem>
+                    <listitem>
+                        <para>Logging is a very important tool in order to diagnose any issues with either INDI drivers or Ekos. Before submitting any support request, the log must be attached in order to help diagnose the exact issue. Depending on the exact problem, you may need to enable logging for the feature or drivers that exhibit issues. Enabling logging for everything is not recommended as it will produce too much data that would be useful to diagnose the issue and could result in missing the root cause all other. So only enable the necessary logs.</para>
+                    </listitem>
                 </itemizedlist>
             </listitem>
         </varlistentry>
@@ -180,19 +183,19 @@
                                         <para>Select Dome. Use the driver that matches your dome automation</para>
                                     </listitem>
                                     <listitem>
-                                        <para>Select Weather</para>
+                                        <para>Select Weather. Use the driver for your weather staion, cloud detector or rain detector</para>
                                     </listitem>
                                     <listitem>
-                                        <para>Select Aux 1</para>
+                                        <para>Select Aux 1. Use the driver for your first auxiliary device</para>
                                     </listitem>
                                     <listitem>
-                                        <para>Select Aux 2</para>
+                                        <para>Select Aux 2. Use the driver for your second auxiliary device</para>
                                     </listitem>
                                     <listitem>
-                                        <para>Select Aux 3</para>
+                                        <para>Select Aux 3. Use the driver for your third auxiliary device</para>
                                     </listitem>
                                     <listitem>
-                                        <para>Select Aux 4</para>
+                                        <para>Select Aux 4. Use the driver for your fourth auxiliary device</para>
                                     </listitem>
                                 </itemizedlist>
                             </listitem>
@@ -340,13 +343,13 @@
                                 <para>Choose Autoguider</para>
                                 <itemizedlist>
                                     <listitem>
-                                        <para>Choose Internal if you want Ekos to use its internal guider (recommended)</para>
+                                        <para>Choose Internal to use the Ekos internal guider (recommended)</para>
                                     </listitem>
                                     <listitem>
-                                        <para>Choose PHD2 if you want Ekos to use the PHD2 autoguider</para>
+                                        <para>Choose PHD2 to use the PHD2 autoguider</para>
                                     </listitem>
                                     <listitem>
-                                        <para>Choose LinGuider if you want Ekos to use the Linguider autoguider</para>
+                                        <para>Choose LinGuider to use the Linguider autoguider</para>
                                     </listitem>
                                 </itemizedlist>
                             </listitem>
@@ -354,16 +357,16 @@
                                 <itemizedlist>
                                     <para>Additional Services</para>
                                     <listitem>
-                                        <para>Tick Joystick</para>
+                                        <para>Tick Joystick to use a joystick control</para>
                                     </listitem>
                                     <listitem>
-                                        <para>Tick Remote Astrometry</para>
+                                        <para>Tick Remote Astrometry to use remote astrometry plate solver</para>
                                     </listitem>
                                     <listitem>
-                                        <para>Tick Watch Dog</para>
+                                        <para>Tick Watch Dog to control a remote observatory with the Watchdog driver</para>
                                     </listitem>
                                     <listitem>
-                                        <para>Tick Sky Safari</para>
+                                        <para>Tick Sky Safari to use the Sky Safari application</para>
                                     </listitem>
                                 </itemizedlist>
                             </listitem>
@@ -387,25 +390,25 @@
                 <para>2. Start &amp; Stop INDI group</para>
                 <itemizedlist>
                     <listitem>
-                        <para>Play</para>
+                        <para>Click Play to start the INDI server using the selected profile</para>
                     </listitem>
                     <listitem>
-                        <para>Stop</para>
+                        <para>Click Stop to Stop INDI server</para>
                     </listitem>
                     <listitem>
-                        <para>Cloud</para>
+                        <para>Click Ekos Live to open Ekos Live login tool</para>
                     </listitem>
                     <listitem>
-                        <para>Indi</para>
+                        <para>Click Indi to opoen INDI Control Panel</para>
                     </listitem>
                     <listitem>
-                        <para>Port</para>
+                        <para>Click Serial Port to open Serial Port Assistant tool</para>
                     </listitem>
                     <listitem>
-                        <para>Options</para>
+                        <para>Click Options to open KStars/Ekos configuration</para>
                     </listitem>
                     <listitem>
-                        <para>Logs</para>
+                        <para>Click Logs to open Loggin Configuration tool</para>
                     </listitem>
                 </itemizedlist>
             </listitem>
@@ -413,10 +416,10 @@
                 <para>2. Connect &amp; Disconnect Devices group</para>
                 <itemizedlist>
                     <listitem>
-                        <para>Connect</para>
+                        <para>Click Connect to connect to all devices in the profile</para>
                     </listitem>
                     <listitem>
-                        <para>Disconnect</para>
+                        <para>Click Disconnect to disconnect all devices in the profile</para>
                     </listitem>
                 </itemizedlist>
             </listitem>
@@ -427,19 +430,19 @@
                         <para>Capture group</para>
                         <itemizedlist>
                             <listitem>
-                                <para>Status</para>
+                                <para>Status: shows the status of the capture module</para>
                             </listitem>
                             <listitem>
-                                <para>Viewer</para>
+                                <para>Viewer: shows the last captured image (local only)</para>
                             </listitem>
                             <listitem>
-                                <para>Image</para>
+                                <para>Image: Shows seconds remaining in the current capture</para>
                             </listitem>
                             <listitem>
-                                <para>Sequence</para>
+                                <para>Sequence: Shows number of captures in the current sequence job</para>
                             </listitem>
                             <listitem>
-                                <para>Overall</para>
+                                <para>Overall: Shows percentage complete for the sequence queue</para>
                             </listitem>
                         </itemizedlist>
                     </listitem>
@@ -447,22 +450,22 @@
                         <para>Mount &amp; Alignment group</para>
                         <itemizedlist>
                             <listitem>
-                                <para>Status</para>
+                                <para>Status: shows the status of the mount</para>
                             </listitem>
                             <listitem>
-                                <para>Target</para>
+                                <para>Target: Shows the name of the target</para>
                             </listitem>
                             <listitem>
-                                <para>RA</para>
+                                <para>RA: Shows the right ascension of the target</para>
                             </listitem>
                             <listitem>
-                                <para>DE</para>
+                                <para>DE: Shows the declination of the target</para>
                             </listitem>
                             <listitem>
-                                <para>AZ</para>
+                                <para>AZ: Shows the azimuth of the target</para>
                             </listitem>
                             <listitem>
-                                <para>AL</para>
+                                <para>AL: Shows the altitude of the target</para>
                             </listitem>
                         </itemizedlist>
                     </listitem>
@@ -470,16 +473,16 @@
                         <para>Focus group</para>
                         <itemizedlist>
                             <listitem>
-                                <para>Status</para>
+                                <para>Status: Shows the status of the focuser</para>
                             </listitem>
                             <listitem>
-                                <para>HFR</para>
+                                <para>HFR: shows the Half Flux Radius from the last autofocus</para>
                             </listitem>
                             <listitem>
-                                <para>Focus view</para>
+                                <para>Focus view: Shows the star used for auto focus</para>
                             </listitem>
                             <listitem>
-                                <para>HFR profile</para>
+                                <para>HFR profile: Shows the HFR profile of the last autofocus</para>
                             </listitem>
                         </itemizedlist>
                     </listitem>
@@ -487,27 +490,27 @@
                         <para>Guide group</para>
                         <itemizedlist>
                             <listitem>
-                                <para>Status</para>
+                                <para>Status: Shows the status of the autoguider</para>
                             </listitem>
                             <listitem>
-                                <para>sigma RA</para>
+                                <para>sigma RA: Shows the guiding RMS (sigma) on the RA axis</para>
                             </listitem>
                             <listitem>
-                                <para>sigma DE</para>
+                                <para>sigma DE: Shows the guiding RMS (sigma) on the declination axis</para>
                             </listitem>
                             <listitem>
-                                <para>Guide graph</para>
+                                <para>Guide graph: Shows the guide star deviation and guide corrections on a graph against time</para>
                             </listitem>
                             <listitem>
-                                <para>Star profile</para>
+                                <para>Star profile: Shows the guide star</para>
                             </listitem>
                         </itemizedlist>
                     </listitem>
                     <listitem>
-                        <para>Options</para>
+                        <para>Click Options to open Ekos configuration options</para>
                     </listitem>
                     <listitem>
-                        <para>Clear</para>
+                        <para>Click Clear to clear the messages box</para>
                     </listitem>
                 </itemizedlist>
             </listitem>

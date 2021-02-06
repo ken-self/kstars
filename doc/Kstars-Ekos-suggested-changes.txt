@@ -1,0 +1,24 @@
+Suggested changes:
+Ekos
+====
+Change toolbar order to match typical session left to right
+
+
+Setup Module
+============
+Separate from summary. Move summary to another tab
+Display profile editor content instead
+Options... should go to Ekos tab
+Consolidate options > Ekos > general with Setup module
+Move Telescope config from Moun to Setup
+Simplify Profile wizard.
+
+Mount module
+============
+
+Capture Module
+==============
+Consolidate Options > Ekos > Capture
+Separate Video capture to another module/submodule
+Rearrange file settings section
+Consolidate FW setup

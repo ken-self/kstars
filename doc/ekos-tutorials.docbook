@@ -95,5 +95,14 @@
             </para>
         </caption>
     </mediaobject>
-</sect3>
+    <mediaobject>
+        <videoobject>
+            <videodata contentdepth="450" contentwidth="800" fileref="https://www.stellarmate.com/images/videos/indi_logs_guide.mp4"/>
+        </videoobject>
+        <caption>
+            <para>
+                <phrase>how to use the Logging feature to submit logs.</phrase>
+            </para>
+        </caption>
+    </mediaobject></sect3>
 </sect2>
