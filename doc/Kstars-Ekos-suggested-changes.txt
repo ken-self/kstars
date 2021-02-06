@@ -22,3 +22,8 @@ Consolidate Options > Ekos > Capture
 Separate Video capture to another module/submodule
 Rearrange file settings section
 Consolidate FW setup
+
+Help module
+===========
+Links to documentation, tutorials, logging, form etc should live here
+Move links from Profile Wizard
