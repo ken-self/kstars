@@ -63,6 +63,7 @@
   <!ENTITY tool-ekos-focus SYSTEM "ekos-focus.docbook">
   <!ENTITY tool-ekos-guide SYSTEM "ekos-guide.docbook">
   <!ENTITY tool-ekos-logs SYSTEM "ekos-logs.docbook">
+  <!ENTITY tool-ekos-observatory SYSTEM "ekos-observatory.docbook">
   <!ENTITY tool-ekos-profile-editor SYSTEM "ekos-profile-editor.docbook">
   <!ENTITY tool-ekos-profile-wizard SYSTEM "ekos-profile-wizard.docbook">
   <!ENTITY tool-ekos-scheduler SYSTEM "ekos-scheduler.docbook">

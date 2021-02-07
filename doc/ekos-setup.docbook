@@ -16,8 +16,12 @@
             </textobject>
         </mediaobject>
     </screenshot>
-    <para>Ekos Setup Module is the main control module for Ekos. Use the Setup module to maintain equipment profiles, start a profile, monitor the progress of imaging sessions and stop the profile.</para>
-    <para>A Profile is a collection of settings that govern how Ekos connects to an INDI server, INDI devices on the INDI server and auto-guiding applications.</para>
+    <para>Setup Module is the main module in Ekos. Use the Setup module to start annd stop an equipment profile and monitor the status of imaging activities.</para>
+    <para>An equipment Profile is a collection of settings that govern how Ekos connects to an INDI server, INDI devices on the INDI server and auto-guiding applications. The setup module includes a profile editor to create and maintain equipment profiles for local and remote setups.</para>
+    <para>The setup modules displays the status of focus, capture and guiding operations in a compact format</para>
+    <para>Read
+        <link linkend="ekos-setup">more...</link>
+    </para>
     <variablelist>
         <varlistentry>
             <term>Profiles</term>

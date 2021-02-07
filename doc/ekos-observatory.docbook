@@ -1,0 +1,183 @@
+<sect2 id="ekos-observatory">
+    <title>Ekos Observatory</title>
+    <indexterm>
+        <primary>Tools</primary>
+        <secondary>Ekos</secondary>
+        <tertiary>Observatory</tertiary>
+    </indexterm>
+    <screenshot>
+        <screeninfo>Ekos Observatory</screeninfo>
+        <mediaobject>
+            <imageobject>
+                <imagedata fileref="ekos_observatory.png" format="PNG"/>
+            </imageobject>
+            <textobject>
+                <phrase>Ekos Observatory</phrase>
+            </textobject>
+        </mediaobject>
+    </screenshot>
+    <para>Observatory control.</para>
+    <sect3 id="observatory-operation">
+        <title>Using the Observatory Module</title>
+        <itemizedlist>
+            <listitem>
+                <para>Dome section</para>
+                <itemizedlist>
+                    <listitem>
+                        <para>Position group</para>
+                        <itemizedlist>
+                            <listitem>
+                                <para>Position</para>
+                            </listitem>
+                            <listitem>
+                                <para>Type Motion</para>
+                            </listitem>
+                            <listitem>
+                                <para>Click Move (abs)</para>
+                            </listitem>
+                            <listitem>
+                                <para>Type Motion</para>
+                            </listitem>
+                            <listitem>
+                                <para>Click Move (rel)</para>
+                            </listitem>
+                            <listitem>
+                                <para>Click CW</para>
+                            </listitem>
+                            <listitem>
+                                <para>Click CCW</para>
+                            </listitem>
+                        </itemizedlist>
+                    </listitem>
+                    <listitem>
+                        <para>Slaving group</para>
+                        <itemizedlist>
+                            <listitem>
+                                <para>Click Enable</para>
+                            </listitem>
+                            <listitem>
+                                <para>Click Disable</para>
+                            </listitem>
+                            <listitem>
+                                <para>Click Park</para>
+                            </listitem>
+                            <listitem>
+                                <para>Click Unparked</para>
+                            </listitem>
+                            <listitem>
+                                <para>Click Abort</para>
+                            </listitem>
+                        </itemizedlist>
+                    </listitem>
+                </itemizedlist>
+            </listitem>
+            <listitem>
+                <para>Shutter group</para>
+                <itemizedlist>
+                    <listitem>
+                        <para>Click Closed</para>
+                    </listitem>
+                    <listitem>
+                        <para>Click Open</para>
+                    </listitem>
+                </itemizedlist>
+            </listitem>
+            <listitem>
+                <para>Observatory status group</para>
+                <itemizedlist>
+                    <listitem>
+                        <para>Tick Dome</para>
+                    </listitem>
+                    <listitem>
+                        <para>Tick Shutter</para>
+                    </listitem>
+                    <listitem>
+                        <para>Tick Weather</para>
+                    </listitem>
+                    <listitem>
+                        <para>Click Ready</para>
+                    </listitem>
+                </itemizedlist>
+            </listitem>
+            <listitem>
+                <para>Weather section</para>
+                <itemizedlist>
+                    <listitem>
+                        <para>Click Weather</para>
+                    </listitem>
+                    <listitem>
+                        <para>Weather</para>
+                    </listitem>
+                    <listitem>
+                        <para>Click Tenperature(c)</para>
+                    </listitem>
+                    <listitem>
+                        <para>Tenperature(c)</para>
+                    </listitem>
+                    <listitem>
+                        <para>Click Wind (kph)</para>
+                    </listitem>
+                    <listitem>
+                        <para>Wind (kph)</para>
+                    </listitem>
+                    <listitem>
+                        <para>Click Gust (kph)</para>
+                    </listitem>
+                    <listitem>
+                        <para>Gust (kph)</para>
+                    </listitem>
+                    <listitem>
+                        <para>Click Precip (mm)</para>
+                    </listitem>
+                    <listitem>
+                        <para>Precip (mm)</para>
+                    </listitem>
+                    <listitem>
+                        <para>Clear</para>
+                    </listitem>
+                    <listitem>
+                        <para>Tick Auto scale values</para>
+                    </listitem>
+                    <listitem>
+                        <para>Graph</para>
+                    </listitem>
+                </itemizedlist>
+            </listitem>
+            <listitem>
+                <para>Actions group</para>
+                <itemizedlist>
+                    <listitem>
+                        <para>Tick Alert</para>
+                    </listitem>
+                    <listitem>
+                        <para>Tick Park dome</para>
+                    </listitem>
+                    <listitem>
+                        <para>Tick Close shutter</para>
+                    </listitem>
+                    <listitem>
+                        <para>Status</para>
+                    </listitem>
+                    <listitem>
+                        <para>Type Delay (sec)</para>
+                    </listitem>
+                    <listitem>
+                        <para>Tick Warning</para>
+                    </listitem>
+                    <listitem>
+                        <para>Tick Park Dome</para>
+                    </listitem>
+                    <listitem>
+                        <para>Tick Close shutter</para>
+                    </listitem>
+                    <listitem>
+                        <para>Status</para>
+                    </listitem>
+                    <listitem>
+                        <para>Type Delay (sec)</para>
+                    </listitem>
+                </itemizedlist>
+            </listitem>
+        </itemizedlist>
+    </sect3>
+</sect2>
