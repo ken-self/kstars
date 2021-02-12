@@ -19,7 +19,7 @@
         <ulink url="http://edu.kde.org/kstars">&kstars;</ulink>
         and both are pre-installed on INDI based devices and OS distributions like
         <ulink url="https://www.stellarmate.com/component/jdownloads/category/2-ekos.html?Itemid=507">StellarMate</ulink>
-        and Astroberry. . KStars and Ekos can be installed on &Linux;, &MacOS;, and &Windows; computers.
+        and Astroberry. KStars and Ekos can be installed on &Linux;, &MacOS;, and &Windows; computers.
     </para>
     <para>Each module of Ekos is opened by clicking its icon on the Ekos Toolbar.</para>
     <screenshot>
@@ -63,13 +63,13 @@
         <varlistentry>
             <term>Scheduler Module</term>
             <listitem>
-                <para>The Scheduler module automates the complete observation process for unattended operation. Create a schedule to select multiple targets, specify conditions for imaging, and types of frames to capture. The scheduler intelligently calculates the best observation time for each target and controls the imaging session from startup to shutdown.</para>
+                <para>The Scheduler module automates the complete observation process and controls all your observatory equipment for unattended operation. Create a schedule to select multiple targets, specify conditions for imaging, and types of frames to capture. The scheduler intelligently calculates the best observation time for each target and controls the imaging session from startup to shutdown.</para>
                 <para>Read
                     <link linkend="ekos-scheduler">more...</link>
                 </para>
                 <itemizedlist>
                     <listitem>
-                        <para>Completely automated scheduler to control all your observatory equipment, select the best targets for imaging given current conditions and constraints, monitor weather conditions, and capture your data while you are away!</para>
+                        <para>Completely automated scheduler to , select the best targets for imaging given current conditions and constraints, monitor weather conditions, and capture your data while you are away!</para>
                     </listitem>
                     <listitem>
                         <para>Fully scriptable via
@@ -92,11 +92,10 @@
         <varlistentry>
             <term>Observatory Module</term>
             <listitem>
-                <para>The Observatory module controls the operation of an osbervatory </para>
+                <para>The Observatory module controls the operation of an osbervatory including support for dome slaving.</para>
                 <para>Read
                     <link linkend="ekos-observatory">more...</link>
                 </para>
-                        <para>Support for dome slaving.</para>
             </listitem>
         </varlistentry>
         <varlistentry>
