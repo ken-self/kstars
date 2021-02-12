@@ -26,6 +26,23 @@
         <para>
             With Ekos, the user can utilize the powerful sequence queue to image batches of images for a particular target. In simple setups, the user is expected to focus the CCD, align the mount, frame the target, and start guiding before initiating the capture process. For more complex observatory environments, there are usually predefined custom procedures to be executed to prepare the observatory for imaging, and another set of procedures on shutdown. The user may plan to image one or more targets during the night and expects data to be ready by morning. In &kstars;, tools such as the <link linkend="tool-obsplanner">Observation Planner</link> and <link linkend="tool-whatsup">What's up Tonight</link> help the user in selecting candidates for imaging. After selecting the desired candidates, the user can add them to the Ekos Scheduler list for evaluation. The user may also add the targets directly in Ekos scheduler or select a FITS file of a previous image.
         </para>
+                <itemizedlist>
+                    <listitem>
+                        <para>Fully scriptable via
+                            <ulink url="http://www.freedesktop.org/wiki/Software/dbus/">DBus</ulink>
+                            .
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>Automated
+                            <emphasis>unattended</emphasis>
+                            meridian flip . Ekos performs post meridian flip alignment, calibration, focusing, and guiding to resume the capture session.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>Support for dome slaving.</para>
+                    </listitem>
+                </itemizedlist>
     </sect3>
     
     <sect3 id="ekos-scheduler-settings">

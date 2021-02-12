@@ -63,30 +63,10 @@
         <varlistentry>
             <term>Scheduler Module</term>
             <listitem>
-                <para>The Scheduler module automates the complete observation process and controls all your observatory equipment for unattended operation. Create a schedule to select multiple targets, specify conditions for imaging, and types of frames to capture. The scheduler intelligently calculates the best observation time for each target and controls the imaging session from startup to shutdown.</para>
+                <para>The Scheduler module automates the complete observation process and controls all your observatory equipment for unattended operation. Create a schedule to select multiple targets, specify conditions for imaging, and types of frames to capture. The scheduler intelligently calculates the best observation time for each target and controls the imaging session from startup to shutdown. Use the Scheduler module to select the best targets for imaging given current conditions and constraints, monitor weather conditions, and capture your data while you are away!</para>
                 <para>Read
                     <link linkend="ekos-scheduler">more...</link>
                 </para>
-                <itemizedlist>
-                    <listitem>
-                        <para>Completely automated scheduler to , select the best targets for imaging given current conditions and constraints, monitor weather conditions, and capture your data while you are away!</para>
-                    </listitem>
-                    <listitem>
-                        <para>Fully scriptable via
-                            <ulink url="http://www.freedesktop.org/wiki/Software/dbus/">DBus</ulink>
-                            .
-                        </para>
-                    </listitem>
-                    <listitem>
-                        <para>Automated
-                            <emphasis>unattended</emphasis>
-                            meridian flip . Ekos performs post meridian flip alignment, calibration, focusing, and guiding to resume the capture session.
-                        </para>
-                    </listitem>
-                    <listitem>
-                        <para>Support for dome slaving.</para>
-                    </listitem>
-                </itemizedlist>
             </listitem>
         </varlistentry>
         <varlistentry>
