@@ -1252,13 +1252,7 @@ void Manager::processNewDevice(ISD::GDInterface * devInterface)
             if (driverInterface & INDI::BaseDevice::CCD_INTERFACE)
                 return;
 
-            if (driverInterface & INDI::BaseDevice::TELESCOPE_INTERFACE     ||
-                    driverInterface & INDI::BaseDevice::FOCUSER_INTERFACE   ||
-                    driverInterface & INDI::BaseDevice::FILTER_INTERFACE    ||
-                    driverInterface & INDI::BaseDevice::AUX_INTERFACE       ||
-                    driverInterface & INDI::BaseDevice::WEATHER_INTERFACE   ||
-                    driverInterface & INDI::BaseDevice::GPS_INTERFACE)
-                serialPortAssistant->addDevice(devInterface);
+            serialPortAssistant->addDevice(devInterface);
 
             if (Options::autoLoadSerialAssistant())
                 serialPortAssistant->show();
@@ -2969,7 +2963,6 @@ void Manager::updateMountStatus(ISD::Telescope::Status status)
 void Manager::updateMountCoords(const QString &ra, const QString &dec, const QString &az, const QString &alt,
                                 int pierSide, const QString &ha)
 {
-    Q_UNUSED(ha);
     Q_UNUSED(pierSide);
     raOUT->setText(ra);
     decOUT->setText(dec);
@@ -2982,6 +2975,7 @@ void Manager::updateMountCoords(const QString &ra, const QString &dec, const QSt
         {"de", dms::fromString(dec, true).Degrees()},
         {"az", dms::fromString(az, true).Degrees()},
         {"at", dms::fromString(alt, true).Degrees()},
+        {"ha", dms::fromString(ha, false).Degrees()},
     };
 
     ekosLiveClient.get()->message()->updateMountStatus(cStatus);
