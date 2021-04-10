@@ -63,8 +63,12 @@
 #define ZOOM_LOW_INCR  10
 #define ZOOM_HIGH_INCR 50
 
+#define REPORT_FITS_ERROR char fitsErrorMessage[512]={0}; \
+                          fits_get_errstatus(status, fitsErrorMessage); \
+                          lastError = fitsErrorMessage;
+
 const QString FITSData::m_TemporaryPath = QStandardPaths::writableLocation(QStandardPaths::TempLocation);
-const QStringList RAWFormats = { "cr2", "cr3", "crw", "nef", "raf", "dng", "arw" };
+const QStringList RAWFormats = { "cr2", "cr3", "crw", "nef", "raf", "dng", "arw", "orf" };
 
 
 FITSData::FITSData(FITSMode fitsMode): m_Mode(fitsMode)
@@ -83,6 +87,8 @@ FITSData::FITSData(const FITSData * other)
     debayerParams.method  = DC1394_BAYER_METHOD_NEAREST;
     debayerParams.filter  = DC1394_COLOR_FILTER_RGGB;
     debayerParams.offsetX = debayerParams.offsetY = 0;
+
+    m_TemporaryDataFile.setFileTemplate("fits_memory_XXXXXX");
 
     this->m_Mode = other->m_Mode;
     this->m_Statistics.channels = other->m_Statistics.channels;
@@ -119,9 +125,6 @@ FITSData::~FITSData()
         fits_flush_file(fptr, &status);
         fits_close_file(fptr, &status);
         fptr = nullptr;
-
-        if (m_isTemporary && autoRemoveTemporaryFITS)
-            QFile::remove(m_Filename);
     }
 }
 
@@ -136,14 +139,6 @@ void FITSData::loadCommon(const QString &inFilename)
         fits_flush_file(fptr, &status);
         fits_close_file(fptr, &status);
         fptr = nullptr;
-
-        // If current file is temporary AND
-        // Auto Remove Temporary File is Set AND
-        // New filename is different from existing filename
-        // THen remove it. We have to check for name since we cannot delete
-        // the same filename and try to open it below!
-        if (m_isTemporary && autoRemoveTemporaryFITS && inFilename != m_Filename)
-            QFile::remove(m_Filename);
     }
 
     m_Filename = inFilename;
@@ -221,10 +216,6 @@ bool FITSData::loadFITSImage(const QByteArray &buffer, const QString &extension,
             qCCritical(KSTARS_FITS) << errMessage;
             return false;
         }
-
-        // Remove compressed .fz if it was temporary
-        if (m_isTemporary && autoRemoveTemporaryFITS)
-            QFile::remove(m_Filename);
 
         m_Filename = uncompressedFile;
         m_isTemporary = true;
@@ -366,9 +357,18 @@ bool FITSData::loadFITSImage(const QByteArray &buffer, const QString &extension,
         m_DateTime = KStarsDateTime(ts.date(), ts.time());
     }
 
-    if (m_Statistics.channels == 1 && Options::autoDebayer() && checkDebayer())
+    // Only check for debayed IF the original naxes[2] is 1
+    // which is for single channels.
+    if (naxes[2] == 1 && m_Statistics.channels == 1 && Options::autoDebayer() && checkDebayer())
     {
-        //m_BayerBuffer = m_ImageBuffer;
+        // Save bayer image on disk in case we need to save it later since debayer destorys this data
+        if (m_isTemporary && m_TemporaryDataFile.open())
+        {
+            m_TemporaryDataFile.write(buffer);
+            m_TemporaryDataFile.close();
+            m_Filename = m_TemporaryDataFile.fileName();
+        }
+
         if (debayer())
             calculateStats();
     }
@@ -715,13 +715,13 @@ bool FITSData::saveImage(const QString &newFilename)
     long nelements;
     fitsfile * new_fptr;
 
-    if (m_isTemporary == false && HasDebayer && m_Filename.isEmpty() == false)
+    if (HasDebayer && m_Filename.isEmpty() == false)
     {
         fits_flush_file(fptr, &status);
         /* close current file */
         if (fits_close_file(fptr, &status))
         {
-            fits_report_error(stderr, status);
+            REPORT_FITS_ERROR
             return status;
         }
 
@@ -740,12 +740,6 @@ bool FITSData::saveImage(const QString &newFilename)
             return false;
         }
 
-        //        if (m_isTemporary && autoRemoveTemporaryFITS)
-        //        {
-        //            QFile::remove(m_Filename);
-        //            m_isTemporary = false;
-        //        }
-
         m_Filename = finalFileName;
 
         // Use open diskfile as it does not use extended file names which has problems opening
@@ -756,19 +750,20 @@ bool FITSData::saveImage(const QString &newFilename)
         return true;
     }
 
+    // Read the image back into buffer in case we debyayed
     nelements = m_Statistics.samples_per_channel * m_Statistics.channels;
 
     /* close current file */
-    if (fits_close_file(fptr, &status))
+    if (fptr && fits_close_file(fptr, &status))
     {
-        fits_report_error(stderr, status);
+        REPORT_FITS_ERROR
         return false;
     }
 
     /* Create a new File, overwriting existing*/
     if (fits_create_file(&new_fptr, QString("!%1").arg(newFilename).toLocal8Bit(), &status))
     {
-        fits_report_error(stderr, status);
+        REPORT_FITS_ERROR
         return status;
     }
 
@@ -782,14 +777,14 @@ bool FITSData::saveImage(const QString &newFilename)
     // JM 2020-12-28: Here we to use bitpix values
     if (fits_create_img(fptr, m_FITSBITPIX, naxis, naxes, &status))
     {
-        fits_report_error(stderr, status);
+        REPORT_FITS_ERROR
         return false;
     }
 
     // Here we need to use the actual data type
     if (fits_write_img(fptr, m_Statistics.dataType, 1, nelements, m_ImageBuffer, &status))
     {
-        fits_report_error(stderr, status);
+        REPORT_FITS_ERROR
         return false;
     }
 
@@ -798,14 +793,14 @@ bool FITSData::saveImage(const QString &newFilename)
     // Minimum
     if (fits_update_key(fptr, TDOUBLE, "DATAMIN", &(m_Statistics.min), "Minimum value", &status))
     {
-        fits_report_error(stderr, status);
+        REPORT_FITS_ERROR
         return false;
     }
 
     // Maximum
     if (fits_update_key(fptr, TDOUBLE, "DATAMAX", &(m_Statistics.max), "Maximum value", &status))
     {
-        fits_report_error(stderr, status);
+        REPORT_FITS_ERROR
         return false;
     }
 
@@ -836,7 +831,7 @@ bool FITSData::saveImage(const QString &newFilename)
             default:
             {
                 char valueBuffer[256] = {0};
-                strncpy(valueBuffer, value.toString().toLatin1().constData(), 256);
+                strncpy(valueBuffer, value.toString().toLatin1().constData(), 256 - 1);
                 fits_write_key(fptr, TSTRING, key.toLatin1().constData(), valueBuffer, comment, &status);
             }
         }
@@ -845,7 +840,7 @@ bool FITSData::saveImage(const QString &newFilename)
     // ISO Date
     if (fits_write_date(fptr, &status))
     {
-        fits_report_error(stderr, status);
+        REPORT_FITS_ERROR
         return false;
     }
 
@@ -854,7 +849,7 @@ bool FITSData::saveImage(const QString &newFilename)
     // History
     if (fits_write_history(fptr, history.toLatin1(), &status))
     {
-        fits_report_error(stderr, status);
+        REPORT_FITS_ERROR
         return false;
     }
 
@@ -872,12 +867,6 @@ bool FITSData::saveImage(const QString &newFilename)
         rotWCSFITS(rot, mirror);
 
     rotCounter = flipHCounter = flipVCounter = 0;
-
-    if (m_Filename.isEmpty() == false && m_isTemporary && autoRemoveTemporaryFITS)
-    {
-        QFile::remove(m_Filename);
-        m_isTemporary = false;
-    }
 
     m_Filename = newFilename;
 
@@ -949,7 +938,9 @@ int FITSData::calculateMinMax(bool refresh)
 
     status = 0;
 
-    if ((fptr != nullptr) && !refresh)
+    // Only fetch from header if we have a single channel
+    // Otherwise, calculate manually.
+    if (m_Statistics.channels == 1 && fptr != nullptr && !refresh)
     {
         if (fits_read_key_dbl(fptr, "DATAMIN", &(m_Statistics.min[0]), nullptr, &status) == 0)
             nfound++;
@@ -1506,7 +1497,7 @@ QFuture<bool> FITSData::findStars(StarAlgorithm algorithm, const QRect &tracking
 
 int FITSData::filterStars(const float innerRadius, const float outerRadius)
 {
-    long const sqDiagonal = this->width() * this->width() / 4 + this->height() * this->height() / 4;
+    long const sqDiagonal = (long) this->width() * (long) this->width() / 4 + (long) this->height() * (long) this->height() / 4;
     long const sqInnerRadius = std::lround(sqDiagonal * innerRadius * innerRadius);
     long const sqOuterRadius = std::lround(sqDiagonal * outerRadius * outerRadius);
 
@@ -2322,10 +2313,6 @@ bool FITSData::wcsToPixel(const SkyPoint &wcsCoord, QPointF &wcsPixelPoint, QPoi
     if ((status = wcss2p(m_WCSHandle, 1, 2, worldcrd, &phi, &theta, imgcrd, pixcrd, stat)) != 0)
     {
         lastError = QString("wcss2p error %1: %2.").arg(status).arg(wcs_errmsg[status]);
-
-        fprintf(stderr, "******************* wcss2p(%f,%f) error: %s\n", worldcrd[0], worldcrd[1], lastError.toLatin1().data());//////////////////////////
-        qCDebug(KSTARS_FITS) << "wcss2p failed with:" << worldcrd[0] << worldcrd[1];///////////////////////
-        
         return false;
     }
 
@@ -3128,22 +3115,21 @@ void FITSData::setBayerParams(BayerParams * param)
     debayerParams.offsetY = param->offsetY;
 }
 
-bool FITSData::debayer()
+bool FITSData::debayer(bool reload)
 {
-    //    if (m_ImageBuffer == nullptr)
-    //    {
-    //        int anynull = 0, status = 0;
+    if (reload)
+    {
+        int anynull = 0, status = 0;
 
-    //        //m_BayerBuffer = m_ImageBuffer;
-
-    //        if (fits_read_img(fptr, stats.dataType, 1, stats.samples_per_channel, nullptr, m_ImageBuffer, &anynull, &status))
-    //        {
-    //            char errmsg[512];
-    //            fits_get_errstatus(status, errmsg);
-    //            KSNotification::error(i18n("Error reading image: %1", QString(errmsg)), i18n("Debayer error"));
-    //            return false;
-    //        }
-    //    }
+        if (fits_read_img(fptr, m_Statistics.dataType, 1, m_Statistics.samples_per_channel, nullptr, m_ImageBuffer,
+                          &anynull, &status))
+        {
+            //                char errmsg[512];
+            //                fits_get_errstatus(status, errmsg);
+            //                KSNotification::error(i18n("Error reading image: %1", QString(errmsg)), i18n("Debayer error"));
+            return false;
+        }
+    }
 
     switch (m_Statistics.dataType)
     {
@@ -3344,17 +3330,6 @@ QString FITSData::getLastError() const
 {
     return lastError;
 }
-
-bool FITSData::getAutoRemoveTemporaryFITS() const
-{
-    return autoRemoveTemporaryFITS;
-}
-
-void FITSData::setAutoRemoveTemporaryFITS(bool value)
-{
-    autoRemoveTemporaryFITS = value;
-}
-
 
 template <typename T>
 void FITSData::convertToQImage(double dataMin, double dataMax, double scale, double zero, QImage &image)

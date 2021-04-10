@@ -26,6 +26,7 @@
 #include "dialogs/finddialog.h"
 #include "ekos/manager.h"
 #include "ekos/capture/sequencejob.h"
+#include "ekos/capture/placeholderpath.h"
 #include "skyobjects/starobject.h"
 
 #include <KNotifications/KNotification>
@@ -152,6 +153,8 @@ Scheduler::Scheduler()
     queueSaveB->setAttribute(Qt::WA_LayoutUsesWidgetRect);
     queueLoadB->setIcon(QIcon::fromTheme("document-open"));
     queueLoadB->setAttribute(Qt::WA_LayoutUsesWidgetRect);
+    queueAppendB->setIcon(QIcon::fromTheme("document-import"));
+    queueAppendB->setAttribute(Qt::WA_LayoutUsesWidgetRect);
 
     loadSequenceB->setIcon(QIcon::fromTheme("document-open"));
     loadSequenceB->setAttribute(Qt::WA_LayoutUsesWidgetRect);
@@ -202,7 +205,8 @@ Scheduler::Scheduler()
 
     connect(queueSaveAsB, &QPushButton::clicked, this, &Scheduler::saveAs);
     connect(queueSaveB, &QPushButton::clicked, this, &Scheduler::save);
-    connect(queueLoadB, &QPushButton::clicked, this, &Scheduler::load);
+    connect(queueLoadB, &QPushButton::clicked, this, [&](){ load(true); });
+    connect(queueAppendB, &QPushButton::clicked, this, [&](){ load(false); });
 
     connect(twilightCheck, &QCheckBox::toggled, this, &Scheduler::checkTwilightWarning);
 
@@ -908,14 +912,13 @@ void Scheduler::syncGUIToJob(SchedulerJob *job)
     raBox->showInHours(job->getTargetCoords().ra0());
     decBox->showInDegrees(job->getTargetCoords().dec0());
 
-    if (job->getFITSFile().isEmpty() == false)
-        fitsEdit->setText(job->getFITSFile().toLocalFile());
-    else
-        fitsEdit->clear();
+    // fitsURL/sequenceURL are not part of UI, but the UI serves as model, so keep them here for now
+    fitsURL = job->getFITSFile().isEmpty() ? QUrl() : job->getFITSFile();
+    sequenceURL = job->getSequenceFile();
+    fitsEdit->setText(fitsURL.toLocalFile());
+    sequenceEdit->setText(sequenceURL.toLocalFile());
 
     rotationSpin->setValue(job->getRotation());
-
-    sequenceEdit->setText(job->getSequenceFile().toLocalFile());
 
     trackStepCheck->setChecked(job->getStepPipeline() & SchedulerJob::USE_TRACK);
     focusStepCheck->setChecked(job->getStepPipeline() & SchedulerJob::USE_FOCUS);
@@ -1014,13 +1017,6 @@ void Scheduler::loadJob(QModelIndex i)
     //job->setState(SchedulerJob::JOB_IDLE);
     //job->setStage(SchedulerJob::STAGE_IDLE);
     syncGUIToJob(job);
-
-    if (job->getFITSFile().isEmpty() == false)
-        fitsURL = job->getFITSFile();
-    else
-        fitsURL = QUrl();
-
-    sequenceURL = job->getSequenceFile();
 
     /* Turn the add button into an apply button */
     setJobAddApply(false);
@@ -1423,6 +1419,7 @@ void Scheduler::stop()
     //startB->setText("Start Scheduler");
 
     queueLoadB->setEnabled(true);
+    queueAppendB->setEnabled(true);
     addToQueueB->setEnabled(true);
     setJobManipulation(false, false);
     mosaicB->setEnabled(true);
@@ -1462,6 +1459,7 @@ void Scheduler::start()
 
             /* Disable edit-related buttons */
             queueLoadB->setEnabled(false);
+            queueAppendB->setEnabled(false);
             addToQueueB->setEnabled(false);
             setJobManipulation(false, false);
             mosaicB->setEnabled(false);
@@ -3710,7 +3708,7 @@ bool Scheduler::manageConnectionLoss()
     return true;
 }
 
-void Scheduler::load()
+void Scheduler::load(bool clearQueue)
 {
     QUrl fileURL =
         QFileDialog::getOpenFileUrl(Ekos::Manager::Instance(), i18n("Open Ekos Scheduler List"), dirPath, "Ekos Scheduler List (*.esl)");
@@ -3726,8 +3724,11 @@ void Scheduler::load()
 
     dirPath = QUrl(fileURL.url(QUrl::RemoveFilename));
 
+    if (clearQueue)
+        removeAllJobs();
+
     /* Run a job idle evaluation after a successful load */
-    if (loadScheduler(fileURL.toLocalFile()))
+    if (appendEkosScheduleList(fileURL.toLocalFile()))
         startJobEvaluation();
 }
 
@@ -3745,6 +3746,12 @@ void Scheduler::removeAllJobs()
 
 bool Scheduler::loadScheduler(const QString &fileURL)
 {
+    removeAllJobs();
+    return appendEkosScheduleList(fileURL);
+}
+
+bool Scheduler::appendEkosScheduleList(const QString &fileURL)
+{
     SchedulerState const old_state = state;
     state = SCHEDULER_LOADING;
 
@@ -3758,8 +3765,6 @@ bool Scheduler::loadScheduler(const QString &fileURL)
         state = old_state;
         return false;
     }
-
-    removeAllJobs();
 
     LilXML *xmlParser = newLilXML();
     char errmsg[MAXRBUF];
@@ -5092,8 +5097,14 @@ bool Scheduler::estimateJobTime(SchedulerJob *schedJob)
 
         }
         // Else rely on the captures done during this session
-        else
+        else if (0 < capturesPerRepeat)
+        {
             captures_completed = schedJob->getCompletedCount() / capturesPerRepeat * seqJob->getCount();
+        }
+        else
+        {
+            captures_completed = 0;
+        }
 
         // Check if we still need any light frames. Because light frames changes the flow of the observatory startup
         // Without light frames, there is no need to do focusing, alignment, guiding...etc
@@ -6037,15 +6048,11 @@ void Scheduler::startMosaicTool()
         return;
     }
 
-    Mosaic mosaicTool;
-
     SkyPoint center;
     center.setRA0(ra);
     center.setDec0(dec);
 
-    mosaicTool.setCenter(center);
-    mosaicTool.calculateFOV();
-    mosaicTool.adjustSize();
+    Mosaic mosaicTool(nameEdit->text(), center, Ekos::Manager::Instance());
 
     if (mosaicTool.exec() == QDialog::Accepted)
     {
@@ -6094,7 +6101,7 @@ void Scheduler::startMosaicTool()
         QString fitsFileBackup = fitsEdit->text();
         fitsEdit->clear();
 
-        foreach (OneTile *oneJob, mosaicTool.getJobs())
+        foreach (auto oneJob, mosaicTool.getJobs())
         {
             QString prefix = QString("%1-Part%2").arg(targetName).arg(batchCount++);
 
@@ -6108,9 +6115,9 @@ void Scheduler::startMosaicTool()
             sequenceEdit->setText(filename);
             sequenceURL = QUrl::fromLocalFile(filename);
 
-            raBox->showInHours(oneJob->skyCenter.ra0());
-            decBox->showInDegrees(oneJob->skyCenter.dec0());
-            rotationSpin->setValue(range360(oneJob->rotation));
+            raBox->showInHours(oneJob.center.ra0());
+            decBox->showInDegrees(oneJob.center.dec0());
+            rotationSpin->setValue(oneJob.rotation);
 
             saveJob();
         }
@@ -6480,149 +6487,12 @@ bool Scheduler::loadSequenceQueue(const QString &fileURL, SchedulerJob *schedJob
 
 SequenceJob *Scheduler::processJobInfo(XMLEle *root, SchedulerJob *schedJob)
 {
-    XMLEle *ep    = nullptr;
-    XMLEle *subEP = nullptr;
+    SequenceJob *job = new SequenceJob(root);
+    if (FRAME_LIGHT == job->getFrameType() && nullptr != schedJob)
+        schedJob->setLightFramesRequired(true);
 
-    const QMap<QString, CCDFrameType> frameTypes =
-    {
-        { "Light", FRAME_LIGHT }, { "Dark", FRAME_DARK }, { "Bias", FRAME_BIAS }, { "Flat", FRAME_FLAT }
-    };
-
-    SequenceJob *job = new SequenceJob();
-    QString rawPrefix, frameType, filterType;
-    double exposure    = 0;
-    bool filterEnabled = false, expEnabled = false, tsEnabled = false;
-
-    /* Reset light frame presence flag before enumerating */
-    // JM 2018-09-14: If last sequence job is not LIGHT
-    // then scheduler job light frame is set to whatever last sequence job is
-    // so if it was non-LIGHT, this value is set to false which is wrong.
-    //if (nullptr != schedJob)
-    //    schedJob->setLightFramesRequired(false);
-
-    for (ep = nextXMLEle(root, 1); ep != nullptr; ep = nextXMLEle(root, 0))
-    {
-        if (!strcmp(tagXMLEle(ep), "Exposure"))
-        {
-            exposure = atof(pcdataXMLEle(ep));
-            job->setExposure(exposure);
-        }
-        else if (!strcmp(tagXMLEle(ep), "Filter"))
-        {
-            filterType = QString(pcdataXMLEle(ep));
-        }
-        else if (!strcmp(tagXMLEle(ep), "Type"))
-        {
-            frameType = QString(pcdataXMLEle(ep));
-
-            /* Record frame type and mark presence of light frames for this sequence */
-            CCDFrameType const frameEnum = frameTypes[frameType];
-            job->setFrameType(frameEnum);
-            if (FRAME_LIGHT == frameEnum && nullptr != schedJob)
-                schedJob->setLightFramesRequired(true);
-        }
-        else if (!strcmp(tagXMLEle(ep), "Prefix"))
-        {
-            subEP = findXMLEle(ep, "RawPrefix");
-            if (subEP)
-                rawPrefix = QString(pcdataXMLEle(subEP));
-
-            subEP = findXMLEle(ep, "FilterEnabled");
-            if (subEP)
-                filterEnabled = !strcmp("1", pcdataXMLEle(subEP));
-
-            subEP = findXMLEle(ep, "ExpEnabled");
-            if (subEP)
-                expEnabled = (!strcmp("1", pcdataXMLEle(subEP)));
-
-            subEP = findXMLEle(ep, "TimeStampEnabled");
-            if (subEP)
-                tsEnabled = (!strcmp("1", pcdataXMLEle(subEP)));
-
-            job->setPrefixSettings(rawPrefix, filterEnabled, expEnabled, tsEnabled);
-        }
-        else if (!strcmp(tagXMLEle(ep), "Count"))
-        {
-            job->setCount(atoi(pcdataXMLEle(ep)));
-        }
-        else if (!strcmp(tagXMLEle(ep), "Delay"))
-        {
-            job->setDelay(atoi(pcdataXMLEle(ep)));
-        }
-        else if (!strcmp(tagXMLEle(ep), "FITSDirectory"))
-        {
-            job->setLocalDir(pcdataXMLEle(ep));
-        }
-        else if (!strcmp(tagXMLEle(ep), "RemoteDirectory"))
-        {
-            job->setRemoteDir(pcdataXMLEle(ep));
-        }
-        else if (!strcmp(tagXMLEle(ep), "UploadMode"))
-        {
-            job->setUploadMode(static_cast<ISD::CCD::UploadMode>(atoi(pcdataXMLEle(ep))));
-        }
-    }
-
-    // Sanitize name
-    QString targetName = schedJob->getName();
-    targetName = targetName.replace( QRegularExpression("\\s|/|\\(|\\)|:|\\*|~|\"" ), "_" )
-                 // Remove any two or more __
-                 .replace( QRegularExpression("_{2,}"), "_")
-                 // Remove any _ at the end
-                 .replace( QRegularExpression("_$"), "");
-
-    // Because scheduler sets the target name in capture module
-    // it would be the same as the raw prefix
-    if (targetName.isEmpty() == false && rawPrefix.isEmpty())
-        rawPrefix = targetName;
-
-    // Make full prefix
-    QString imagePrefix = rawPrefix;
-
-    if (imagePrefix.isEmpty() == false)
-        imagePrefix += '_';
-
-    imagePrefix += frameType;
-
-    if (filterEnabled && filterType.isEmpty() == false &&
-            (job->getFrameType() == FRAME_LIGHT || job->getFrameType() == FRAME_FLAT))
-    {
-        imagePrefix += '_';
-
-        imagePrefix += filterType;
-    }
-
-    if (expEnabled)
-    {
-        imagePrefix += '_';
-
-        if (exposure == static_cast<int>(exposure))
-            // Whole number
-            imagePrefix += QString::number(exposure, 'd', 0) + QString("_secs");
-        else
-        {
-            // Decimal
-            if (exposure >= 0.001)
-                imagePrefix += QString::number(exposure, 'f', 3) + QString("_secs");
-            else
-                imagePrefix += QString::number(exposure, 'f', 6) + QString("_secs");
-        }
-    }
-
-    job->setFullPrefix(imagePrefix);
-
-    // Directory postfix
-    QString directoryPostfix;
-
-    /* FIXME: Refactor directoryPostfix assignment, whose code is duplicated in capture.cpp */
-    if (targetName.isEmpty())
-        directoryPostfix = QLatin1String("/") + frameType;
-    else
-        directoryPostfix = QLatin1String("/") + targetName + QLatin1String("/") + frameType;
-    if ((job->getFrameType() == FRAME_LIGHT || job->getFrameType() == FRAME_FLAT) && filterType.isEmpty() == false)
-        directoryPostfix += QLatin1String("/") + filterType;
-
-    job->setDirectoryPostfix(directoryPostfix);
+    auto placeholderPath = Ekos::PlaceholderPath();
+    placeholderPath.processJobInfo(job, schedJob->getName());
 
     return job;
 }

@@ -2713,7 +2713,7 @@ bool Capture::addJob(bool preview)
 
     job->setFrame(captureFrameXN->value(), captureFrameYN->value(), captureFrameWN->value(), captureFrameHN->value());
     job->setRemoteDir(fileRemoteDirT->text());
-    job->setLocalDir(fileDirectoryT->text());
+    job->setLocalDir(QUrl(fileDirectoryT->text()).adjusted(QUrl::StripTrailingSlash).path());
 
     if (m_JobUnderEdit == false)
     {
@@ -3527,14 +3527,14 @@ void Capture::setGuideDeviation(double delta_ra, double delta_dec)
             suspend();
 
             m_SpikeDetected     = false;
-
-            // Check if we need to start meridian flip
-            if (checkMeridianFlipReady())
-                return;
-
             m_DeviationDetected = true;
 
-            guideDeviationTimer.start();
+            // Check if we need to start meridian flip. If yes, we need to start capturing
+            // to ensure that capturing is recovered after the flip
+            if (checkMeridianFlipReady())
+                start();
+            else
+                guideDeviationTimer.start();
         }
         return;
     }
@@ -3766,6 +3766,7 @@ void Capture::setMeridianFlipStage(MFStage stage)
                 {
                     qCDebug(KSTARS_EKOS_CAPTURE) << "Resetting HFR value to file value of" << fileHFR << "pixels after meridian flip.";
                     //firstAutoFocus = true;
+                    inSequenceFocusCounter = 0;
                     limitFocusHFRN->setValue(fileHFR);
                 }
 
@@ -4864,7 +4865,12 @@ int Capture::getJobRemainingTime(SequenceJob * job)
                                      (job->getCount() - job->getCompleted()));
 
     if (job->getStatus() == SequenceJob::JOB_BUSY)
-        remaining += job->getExposeLeft() + getEstimatedDownloadTime();
+    {
+        if (job->getExposeLeft())
+            remaining -= job->getExposure() - job->getExposeLeft();
+        else
+            remaining += job->getExposeLeft() + getEstimatedDownloadTime();
+    }
 
     return remaining;
 }
@@ -6540,6 +6546,14 @@ void Capture::toggleVideo(bool enabled)
     }
 
     currentCCD->setVideoStreamEnabled(enabled);
+}
+
+bool Capture::setVideoLimits(uint16_t maxBufferSize, uint16_t maxPreviewFPS)
+{
+    if (currentCCD == nullptr)
+        return false;
+
+    return currentCCD->setStreamLimits(maxBufferSize, maxPreviewFPS);
 }
 
 void Capture::setVideoStreamEnabled(bool enabled)

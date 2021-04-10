@@ -45,6 +45,7 @@
 #include <QObject>
 #include <QRect>
 #include <QVariant>
+#include <QTemporaryFile>
 
 #ifndef KSTARS_LITE
 #include <kxmlguiwindow.h>
@@ -389,7 +390,13 @@ class FITSData : public QObject
         {
             return HasDebayer;
         }
-        bool debayer();
+
+        /**
+         * @brief debayer the 1-channel data to 3-channel RGB using the default debayer pattern detected in the FITS header.
+         * @param reload If true, it will read the image again from disk before performing debayering. This is necessary to attempt
+         * subsequent debayering processes on an already debayered image.
+         */
+        bool debayer(bool reload = false);
         bool debayer_8bit();
         bool debayer_16bit();
         void getBayerParams(BayerParams *param);
@@ -419,10 +426,6 @@ class FITSData : public QObject
         const QString &compressedFilename() const
         {
             return m_compressedFilename;
-        }
-        bool isTempFile() const
-        {
-            return m_isTemporary;
         }
         bool isCompressed() const
         {
@@ -458,9 +461,6 @@ class FITSData : public QObject
          * @return True if conversion is successful, false otherwise.
          */
         static bool ImageToFITS(const QString &filename, const QString &format, QString &output);
-
-        bool getAutoRemoveTemporaryFITS() const;
-        void setAutoRemoveTemporaryFITS(bool value);
 
         QString getLastError() const;
 
@@ -582,6 +582,7 @@ class FITSData : public QObject
         //uint8_t *m_BayerBuffer { nullptr };
         /// Bayer parameters
         BayerParams debayerParams;
+        QTemporaryFile m_TemporaryDataFile;
 
         int m_FITSBITPIX {USHORT_IMG};
         FITSImage::Statistic m_Statistics;
@@ -594,9 +595,6 @@ class FITSData : public QObject
 
         // Detector Settings
         QVariantMap m_SourceExtractorSettings;
-
-        /// Remove temporary files after closing
-        bool autoRemoveTemporaryFITS { true };
 
         QFuture<bool> m_StarFindFuture;
 

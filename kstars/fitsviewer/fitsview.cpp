@@ -203,6 +203,24 @@ FITSView::FITSView(QWidget * parent, FITSMode fitsMode, FITSScale filterType) : 
     connect(image_frame.get(), SIGNAL(markerSelected(int, int)), this, SLOT(processMarkerSelection(int, int)));
     connect(&wcsWatcher, SIGNAL(finished()), this, SLOT(syncWCSState()));
 
+    m_UpdateFrameTimer.setInterval(250);
+    m_UpdateFrameTimer.setSingleShot(true);
+    connect(&m_UpdateFrameTimer, &QTimer::timeout, [this]()
+    {
+        if (toggleStretchAction)
+            toggleStretchAction->setChecked(stretchImage);
+
+        // We employ two schemes for managing the image and its overlays, depending on the size of the image
+        // and whether we need to therefore conserve memory. The small-image strategy explicitly scales up
+        // the image, and writes overlays on the scaled pixmap. The large-image strategy uses a pixmap that's
+        // the size of the image itself, never scaling that up.
+        if (isLargeImage())
+            updateFrameLargeImage();
+        else
+            updateFrameSmallImage();
+
+    });
+
     connect(&fitsWatcher, &QFutureWatcher<bool>::finished, this, &FITSView::loadInFrame);
 
     image_frame->setMouseTracking(true);
@@ -393,7 +411,7 @@ bool FITSView::processData()
         else
             m_AdaptiveSampling = 4;
 
-        m_PreviewSampling *= m_AdaptiveSampling;
+        m_PreviewSampling = m_AdaptiveSampling;
     }
 
     // Rescale to fits window on first load
@@ -650,6 +668,8 @@ void FITSView::ZoomIn()
     currentWidth  = imageData->width() * (currentZoom / ZOOM_DEFAULT);
     currentHeight = imageData->height() * (currentZoom / ZOOM_DEFAULT);
 
+    cleanUpZoom();
+
     updateFrame();
 
     emit newStatus(QString("%1%").arg(currentZoom), FITS_ZOOM);
@@ -673,6 +693,8 @@ void FITSView::ZoomOut()
     if (!imageData) return;
     currentWidth  = imageData->width() * (currentZoom / ZOOM_DEFAULT);
     currentHeight = imageData->height() * (currentZoom / ZOOM_DEFAULT);
+
+    cleanUpZoom();
 
     updateFrame();
 
@@ -715,7 +737,7 @@ bool FITSView::isLargeImage()
 // and get scale returns the ratio of that pixmap size to the image size.
 double FITSView::getScale()
 {
-    return isLargeImage() ? 1.0 : currentZoom / ZOOM_DEFAULT;
+    return (isLargeImage() ? 1.0 : currentZoom / ZOOM_DEFAULT) / m_PreviewSampling;
 }
 
 // scaleSize() is only used with the large-image rendering strategy. It may increase the line
@@ -725,22 +747,31 @@ double FITSView::scaleSize(double size)
 {
     if (!isLargeImage())
         return size;
-    return currentZoom > 100.0 ? size : std::round(size * 100.0 / currentZoom);
+    return (currentZoom > 100.0 ? size : std::round(size * 100.0 / currentZoom)) / m_PreviewSampling;
 }
 
 void FITSView::updateFrame()
 {
-    if (toggleStretchAction)
-        toggleStretchAction->setChecked(stretchImage);
+    // JM 2021-03-13: This timer is used to throttle updateFrame calls to improve performance
+    // If after 250ms no further update frames are called, then the actual update is triggered.
+    // JM 2021-03-16: When stretching in progress, immediately execute so that the user see the changes
+    // in real time
+    if (m_StretchingInProgress)
+    {
+        if (toggleStretchAction)
+            toggleStretchAction->setChecked(stretchImage);
 
-    // We employ two schemes for managing the image and its overlays, depending on the size of the image
-    // and whether we need to therefore conserve memory. The small-image strategy explicitly scales up
-    // the image, and writes overlays on the scaled pixmap. The large-image strategy uses a pixmap that's
-    // the size of the image itself, never scaling that up.
-    if (isLargeImage())
-        updateFrameLargeImage();
+        // We employ two schemes for managing the image and its overlays, depending on the size of the image
+        // and whether we need to therefore conserve memory. The small-image strategy explicitly scales up
+        // the image, and writes overlays on the scaled pixmap. The large-image strategy uses a pixmap that's
+        // the size of the image itself, never scaling that up.
+        if (isLargeImage())
+            updateFrameLargeImage();
+        else
+            updateFrameSmallImage();
+    }
     else
-        updateFrameSmallImage();
+        m_UpdateFrameTimer.start();
 }
 
 
@@ -756,14 +787,10 @@ void FITSView::updateFrameLargeImage()
     font.setPixelSize(scaleSize(FONT_SIZE));
     painter.setFont(font);
 
-    if (m_PreviewSampling == 1)
-    {
-        drawOverlay(&painter, 1.0);
-        drawStarFilter(&painter, 1.0);
-    }
+    drawOverlay(&painter, 1.0 / m_PreviewSampling);
+    drawStarFilter(&painter, 1.0 / m_PreviewSampling);
     image_frame->setPixmap(displayPixmap);
-
-    image_frame->resize(((m_PreviewSampling * currentZoom) / 100.0) * image_frame->pixmap()->size());
+    image_frame->resize(((m_PreviewSampling * currentZoom) / 100.0) * displayPixmap.size());
 }
 
 void FITSView::updateFrameSmallImage()
@@ -774,11 +801,11 @@ void FITSView::updateFrameSmallImage()
 
     QPainter painter(&displayPixmap);
 
-    if (m_PreviewSampling == 1)
-    {
-        drawOverlay(&painter, currentZoom / ZOOM_DEFAULT);
-        drawStarFilter(&painter, currentZoom / ZOOM_DEFAULT);
-    }
+    //    if (m_PreviewSampling == 1)
+    //    {
+    drawOverlay(&painter, currentZoom / ZOOM_DEFAULT);
+    drawStarFilter(&painter, currentZoom / ZOOM_DEFAULT);
+    //}
     image_frame->setPixmap(displayPixmap);
     image_frame->resize(currentWidth, currentHeight);
 }
@@ -1362,7 +1389,7 @@ void FITSView::drawEQGrid(QPainter * painter, double scale)
                     bool inImage = imageData->wcsToPixel(pointToGet, pixelPoint, imagePoint);
                     if (inImage)
                     {
-                        QPointF pt(pixelPoint.x(), pixelPoint.y());
+                        QPointF pt(pixelPoint.x() * scale, pixelPoint.y() * scale);
                         eqGridPoints.append(pt);
                     }
                 }
@@ -1747,37 +1774,35 @@ void FITSView::toggleStars(bool enable)
 {
     markStars = enable;
 
-    if (markStars && !imageData->areStarsSearched())
+    if (markStars)
         searchStars();
 }
 
 void FITSView::searchStars()
 {
     QVariant frameType;
-    if (!imageData || (imageData->getRecordValue("FRAME", frameType) && frameType.toString() != "Light"))
+    if (imageData->areStarsSearched() || !imageData || (imageData->getRecordValue("FRAME", frameType)
+            && frameType.toString() != "Light"))
         return;
 
-    if (!imageData->areStarsSearched())
-    {
-        QApplication::setOverrideCursor(Qt::WaitCursor);
-        emit newStatus(i18n("Finding stars..."), FITS_MESSAGE);
-        qApp->processEvents();
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    emit newStatus(i18n("Finding stars..."), FITS_MESSAGE);
+    qApp->processEvents();
 
 #ifdef HAVE_STELLARSOLVER
-        QVariantMap extractionSettings;
-        extractionSettings["optionsProfileIndex"] = Options::hFROptionsProfile();
-        extractionSettings["optionsProfileGroup"] = static_cast<int>(Ekos::HFRProfiles);
-        getImageData()->setSourceExtractorSettings(extractionSettings);
+    QVariantMap extractionSettings;
+    extractionSettings["optionsProfileIndex"] = Options::hFROptionsProfile();
+    extractionSettings["optionsProfileGroup"] = static_cast<int>(Ekos::HFRProfiles);
+    getImageData()->setSourceExtractorSettings(extractionSettings);
 #endif
 
-        QFuture<bool> result = findStars(ALGORITHM_SEP);
-        result.waitForFinished();
-        if (result.result() && isVisible())
-        {
-            emit newStatus("", FITS_MESSAGE);
-        }
-        QApplication::restoreOverrideCursor();
+    QFuture<bool> result = findStars(ALGORITHM_SEP);
+    result.waitForFinished();
+    if (result.result() && isVisible())
+    {
+        emit newStatus("", FITS_MESSAGE);
     }
+    QApplication::restoreOverrideCursor();
 }
 
 void FITSView::processPointSelection(int x, int y)
@@ -1843,12 +1868,13 @@ void FITSView::cleanUpZoom(QPoint viewCenter)
         x0 = trackingBox.center().x() * scale;
         y0 = trackingBox.center().y() * scale;
     }
-    else
+    else if (!viewCenter.isNull())
     {
         x0 = viewCenter.x() * scale;
         y0 = viewCenter.y() * scale;
     }
-    ensureVisible(x0, y0, width() / 2, height() / 2);
+    if ((x0 != 0) || (y0 != 0))
+        ensureVisible(x0, y0, width() / 2, height() / 2);
     updateMouseCursor();
 }
 

@@ -230,6 +230,7 @@ void Media::upload(FITSView * view)
     {
         {"resolution", resolution},
         {"size", sizeBytes},
+        {"channels", imageData->channels()},
         {"bin", QString("%1x%2").arg(xbin.toString()).arg(ybin.toString())},
         {"bpp", QString::number(imageData->bpp())},
         {"uuid", m_UUID},
@@ -251,7 +252,7 @@ void Media::upload(FITSView * view)
     // For low bandwidth images
     if (!m_Options[OPTION_SET_HIGH_BANDWIDTH] || m_UUID[0] == "+")
     {
-        QImage scaledImage = view->getDisplayImage().scaledToWidth(HB_WIDTH / 2, Qt::FastTransformation);
+        QPixmap scaledImage = view->getDisplayPixmap().scaledToWidth(HB_WIDTH / 2, Qt::FastTransformation);
         scaledImage.save(&buffer, ext.toLatin1().constData(), HB_IMAGE_QUALITY / 2);
         //ext = "jpg";
     }
@@ -281,6 +282,10 @@ void Media::sendUpdatedFrame(FITSView *view)
     buffer.open(QIODevice::WriteOnly);
 
     const FITSData * imageData = view->getImageData();
+
+    if (!imageData)
+        return;
+
     QString resolution = QString("%1x%2").arg(imageData->width()).arg(imageData->height());
     QString sizeBytes = KFormat().formatByteSize(imageData->size());
     QVariant xbin(1), ybin(1), exposure(0), focal_length(0), gain(0), pixel_size(0), aperture(0);
@@ -299,6 +304,7 @@ void Media::sendUpdatedFrame(FITSView *view)
     {
         {"resolution", resolution},
         {"size", sizeBytes},
+        {"channels", imageData->channels()},
         {"bin", QString("%1x%2").arg(xbin.toString()).arg(ybin.toString())},
         {"bpp", QString::number(imageData->bpp())},
         {"uuid", m_UUID},
@@ -333,7 +339,7 @@ void Media::sendUpdatedFrame(FITSView *view)
 
         emit newBoundingRect(boundingRectable, scaledImage.size());
 
-        scaledImage = scaledImage.copy(boundingRectable).scaledToWidth(HB_WIDTH / 2, Qt::FastTransformation);
+        scaledImage = scaledImage.copy(boundingRectable);
     }
     else
     {

@@ -168,5 +168,11 @@ class GuideStars
         Calibration calibration;
         bool calibrationInitialized {false};
 
+        // Find guide star will allow robust star correspondence.
+        bool allowMissingGuideStar { true };
+
+        // counts consecutive missed guide stars.
+        int missedGuideStars { 0 };
+
         friend class TestGuideStars;
 };

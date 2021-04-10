@@ -239,7 +239,7 @@ void Message::sendCameras()
     for(ISD::GDInterface *gd : m_Manager->findDevices(KSTARS_CCD))
     {
         ISD::CCD *oneCCD = dynamic_cast<ISD::CCD*>(gd);
-        connect(oneCCD, &ISD::CCD::newTemperatureValue, this, &Message::sendTemperature, Qt::UniqueConnection);
+        //connect(oneCCD, &ISD::CCD::newTemperatureValue, this, &Message::sendTemperature, Qt::UniqueConnection);
         //connect(oneCCD, &ISD::CCD::previewJPEGGenerated, this, &Message::previewJPEGGenerated, Qt::UniqueConnection);
         ISD::CCDChip *primaryChip = oneCCD->getChip(ISD::CCDChip::PRIMARY_CCD);
 
@@ -391,14 +391,19 @@ void Message::sendDomes()
     {
         ISD::Dome *oneDome = dynamic_cast<ISD::Dome*>(gd);
 
-        QJsonObject status =
+        if (oneDome)
         {
-            { "name", oneDome->getDeviceName()},
-            { "status", ISD::Dome::getStatusString(oneDome->status())}
-        };
-        if (oneDome->canAbsMove())
-            status["az"] = oneDome->azimuthPosition();
-        sendResponse(commands[NEW_DOME_STATE], status);
+            QJsonObject status =
+            {
+                { "name", oneDome->getDeviceName()},
+                { "status", ISD::Dome::getStatusString(oneDome->status())}
+            };
+
+            if (oneDome->canAbsMove())
+                status["az"] = oneDome->azimuthPosition();
+
+            sendResponse(commands[NEW_DOME_STATE], status);
+        }
     }
 }
 
@@ -415,14 +420,17 @@ void Message::sendCaps()
         {
             ISD::DustCap *dustCap = dynamic_cast<ISD::DustCap*>(gd);
 
-            QJsonObject oneCap =
+            if (dustCap)
             {
-                {"name", dustCap->getDeviceName()},
-                {"canPark", dustCap->canPark()},
-                {"hasLight", dustCap->hasLight()},
-            };
+                QJsonObject oneCap =
+                {
+                    {"name", dustCap->getDeviceName()},
+                    {"canPark", dustCap->canPark()},
+                    {"hasLight", dustCap->hasLight()},
+                };
 
-            capList.append(oneCap);
+                capList.append(oneCap);
+            }
         }
     }
 
@@ -515,13 +523,16 @@ void Message::sendTemperature(double value)
 {
     ISD::CCD *oneCCD = dynamic_cast<ISD::CCD*>(sender());
 
-    QJsonObject temperature =
+    if (oneCCD)
     {
-        {"name", oneCCD->getDeviceName()},
-        {"temperature", value}
-    };
+        QJsonObject temperature =
+        {
+            {"name", oneCCD->getDeviceName()},
+            {"temperature", value}
+        };
 
-    sendResponse(commands[NEW_CAMERA_STATE], temperature);
+        sendResponse(commands[NEW_CAMERA_STATE], temperature);
+    }
 }
 
 void Message::sendFilterWheels()
@@ -589,6 +600,7 @@ void Message::processCaptureCommands(const QString &command, const QJsonObject &
     }
     else if (command == commands[CAPTURE_TOGGLE_VIDEO])
     {
+        capture->setVideoLimits(payload["maxBufferSize"].toInt(512), payload["maxPreviewFPS"].toInt(10));
         capture->toggleVideo(payload["enabled"].toBool());
     }
     else if (command == commands[CAPTURE_START])
@@ -979,6 +991,10 @@ void Message::processPolarCommands(const QString &command, const QJsonObject &pa
     {
         align->setPAHRefreshComplete();
     }
+    else if (command == commands[PAH_SLEW_DONE])
+    {
+        align->setPAHSlewDone();
+    }
 }
 
 void Message::setPAHStage(Ekos::Align::PAHStage stage)
@@ -1221,7 +1237,7 @@ void Message::processDeviceCommands(const QString &command, const QJsonObject &p
     else if (command == commands[DEVICE_GET])
     {
         QJsonArray properties;
-        for (const auto &oneProp : oneDevice->getProperties())
+        for (const auto &oneProp : *oneDevice->getProperties())
         {
             QJsonObject singleProp;
             if (oneDevice->getJSONProperty(oneProp->getName(), singleProp, payload["compact"].toBool(false)))
@@ -1241,21 +1257,74 @@ void Message::processDeviceCommands(const QString &command, const QJsonObject &p
     // When subscribed, the updates are immediately pushed as soon as they are received.
     else if (command == commands[DEVICE_PROPERTY_SUBSCRIBE])
     {
-        const QString property = payload["property"].toString();
+        const QJsonArray properties = payload["properties"].toArray();
+        const QJsonArray groups = payload["groups"].toArray();
+
+        // Get existing subscribed props for this device
         QSet<QString> props;
         if (m_PropertySubscriptions.contains(device))
             props = m_PropertySubscriptions[device];
-        props.insert(property);
+
+        // If it is just a single property, let's insert it to props.
+        if (properties.isEmpty() == false)
+        {
+            for (const auto &oneProp : properties)
+                props.insert(oneProp.toString());
+        }
+        // If group is specified, then we need to add ALL properties belonging to this group.
+        else if (groups.isEmpty() == false)
+        {
+            QVariantList indiGroups = groups.toVariantList();
+            for (auto &oneProp : *oneDevice->getProperties())
+            {
+                if (indiGroups.contains(oneProp->getGroupName()))
+                    props.insert(oneProp->getName());
+            }
+        }
+        // Otherwise, subscribe to ALL property in this device
+        else
+        {
+            for (auto &oneProp : *oneDevice->getProperties())
+                props.insert(oneProp->getName());
+        }
+
         m_PropertySubscriptions[device] = props;
     }
     else if (command == commands[DEVICE_PROPERTY_UNSUBSCRIBE])
     {
-        const QString property = payload["property"].toString();
+        const QJsonArray properties = payload["properties"].toArray();
+        const QJsonArray groups = payload["groups"].toArray();
+
+        // Get existing subscribed props for this device
+        QSet<QString> props;
         if (m_PropertySubscriptions.contains(device))
+            props = m_PropertySubscriptions[device];
+
+        // If it is just a single property, let's insert it to props.
+        // If it is just a single property, let's insert it to props.
+        if (properties.isEmpty() == false)
         {
-            QSet<QString> props = m_PropertySubscriptions[device];
-            props.remove(property);
+            for (const auto &oneProp : properties)
+                props.remove(oneProp.toString());
         }
+        // If group is specified, then we need to add ALL properties belonging to this group.
+        else if (groups.isEmpty() == false)
+        {
+            QVariantList indiGroups = groups.toVariantList();
+            for (auto &oneProp : *oneDevice->getProperties())
+            {
+                if (indiGroups.contains(oneProp->getGroupName()))
+                    props.remove(oneProp->getName());
+            }
+        }
+        // Otherwise, subscribe to ALL property in this device
+        else
+        {
+            for (auto &oneProp : *oneDevice->getProperties())
+                props.remove(oneProp->getName());
+        }
+
+        m_PropertySubscriptions[device] = props;
     }
 }
 

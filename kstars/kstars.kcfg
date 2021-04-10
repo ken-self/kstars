@@ -138,7 +138,6 @@
          <default>true</default>
       </entry>
    </group>
-
    <group name="indi">
     <entry name="INDIWindowWidth" type="UInt">
           <label>INDI window width</label>
@@ -196,15 +195,20 @@
          <whatsthis>The default location of saved FITS files</whatsthis>
          <default code="true">KSUtils::getDefaultPath("fitsDir")</default>
       </entry>
-      <entry name="serverPortStart" type="String">
+      <entry name="serverTransferBufferSize" type="Int">
+         <label>INDI Server Transfer Buffer</label>
+         <whatsthis>Allows drivers to queue buffers not exceeding this size in MB</whatsthis>
+         <default>1024</default>
+      </entry>
+      <entry name="serverPortStart" type="Int">
          <label>INDI Server Start Port</label>
          <whatsthis>INDI server will attempt to bind with ports starting from this port</whatsthis>
          <default>7624</default>
       </entry>
-      <entry name="serverPortEnd" type="String">
+      <entry name="serverPortEnd" type="Int">
          <label>INDI Server Final Port</label>
          <whatsthis>INDI server will attempt to bind with ports ending with this port</whatsthis>
-         <default>9000</default>
+         <default>8623</default>
       </entry>
       <entry name="filterAlias" type="StringList">
          <label>Aliases for filter wheel slots.</label>
@@ -2173,6 +2177,10 @@
          <label>Speed index to set mount in Polar Alignment Assistant Tool.</label>
          <default>-1</default>
       </entry>
+      <entry name="PAHRefreshUpdateError" type="Bool">
+         <label>Re-estimates the new polar-alignment error after refresh exposures. Will help you see what your new polar alignment error is, but takes compute resources and can slow down the exposure rate.</label>
+         <default>false</default>
+      </entry>
       <entry name="PAHAutoPark" type="Bool">
          <label>Automatically park the mount after Polar Alignment Assistant Tool is complete.</label>
          <default>false</default>
@@ -2195,7 +2203,7 @@
       </entry>
       <entry name="GuideAlgorithm" type="UInt">
          <label>Which Algorithm to use track guide square (0 smart, 1 SEP, 2 fast, 3 threshold, 4 no threshold, 5 SEP multistar).</label>
-         <default>0</default>
+         <default>5</default>
       </entry>
       <entry name="PHD2Host" type="String">
          <label>Host name of external PHD2 service</label>
@@ -2475,7 +2483,7 @@
     </entry>
       <entry name="PreemptiveShutdown" type="Bool">
          <label>Perform pre-emptive shutdown if no jobs are due for a number of hours.</label>
-         <default>false</default>
+         <default>true</default>
       </entry>
       <entry name="ResetMountModelOnAlignFail" type="Bool">
          <label>Reset mount model in case of alignment failure.</label>
@@ -2704,6 +2712,48 @@
     <entry name="ShowHIPS" type="Bool">
        <label>Draw HiPS sources in the sky map?</label>
        <whatsthis>Toggle whether the HIPS sources are drawn in the sky map.</whatsthis>
+       <default>false</default>
+    </entry>
+   </group>
+   <group name="Terrain">
+    <entry name="TerrainSource" type="String">
+          <label>Terrain Filename.</label>
+          <whatsthis>Terrain source filename.</whatsthis>
+          <default>None</default>
+    </entry>
+    <entry name="TerrainSourceCorrectAz" type="Int">
+          <label>Terrain Azimuth Correction.</label>
+          <whatsthis>Terrain source azimuth correction.</whatsthis>
+          <default>0</default>
+    </entry>
+    <entry name="TerrainDownsampling" type="Int">
+          <label>Terrain Downsampling</label>
+          <whatsthis>Speed quality tradeoff for rendering the terrain image.</whatsthis>
+          <default>4</default>
+    </entry>
+    <entry name="TerrainPanning" type="Bool">
+          <label>Terrain While panning.</label>
+          <whatsthis>Redraw terrain while panning.</whatsthis>
+          <default>true</default>
+    </entry>
+    <entry name="ShowTerrain" type="Bool">
+       <label>Draw terrain</label>
+       <whatsthis>Toggle whether the terrain is drawn in the sky map.</whatsthis>
+       <default>false</default>
+    </entry>
+    <entry name="TerrainSkipSpeedup" type="Bool">
+       <label>Terrain Skip Speedup</label>
+       <whatsthis>Enable a one of the terrain drawing speedups.</whatsthis>
+       <default>true</default>
+    </entry>
+    <entry name="TerrainTransparencySpeedup" type="Bool">
+       <label>Terrain Transparency Speedup.</label>
+       <whatsthis>Enable a one of the terrain drawing speedups.</whatsthis>
+       <default>true</default>
+    </entry>
+    <entry name="TerrainSmoothPixels" type="Bool">
+       <label>Terrain Smooth Pixels.</label>
+       <whatsthis>Smooth pixels for a more pleasant, but slower rendering.</whatsthis>
        <default>false</default>
     </entry>
    </group>

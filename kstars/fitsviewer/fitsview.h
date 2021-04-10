@@ -23,6 +23,7 @@
 #include <QPixmap>
 #include <QScrollArea>
 #include <QStack>
+#include <QTimer>
 #include <QPointer>
 
 #ifdef WIN32
@@ -152,7 +153,7 @@ class FITSView : public QScrollArea
         }
 
         // Zoom related
-        void cleanUpZoom(QPoint viewCenter);
+        void cleanUpZoom(QPoint viewCenter = QPoint());
         QPoint getImagePoint(QPoint viewPortPoint);
         uint16_t zoomedWidth()
         {
@@ -235,9 +236,15 @@ class FITSView : public QScrollArea
         void setPreviewSampling(uint8_t value)
         {
             if (value == 0)
+            {
                 m_PreviewSampling = m_AdaptiveSampling;
+                m_StretchingInProgress = false;
+            }
             else
+            {
                 m_PreviewSampling = value * m_AdaptiveSampling;
+                m_StretchingInProgress = true;
+            }
         }
 
     public slots:
@@ -361,6 +368,7 @@ class FITSView : public QScrollArea
 
         // Resolution for display. Sampling=2 means display every other sample.
         uint8_t m_PreviewSampling { 1 };
+        bool m_StretchingInProgress { false};
         // Adaptive sampling is based on available RAM
         uint8_t m_AdaptiveSampling {1};
 
@@ -383,6 +391,7 @@ class FITSView : public QScrollArea
         FITSMode mode;
         FITSScale filter;
         QString m_LastError;
+        QTimer m_UpdateFrameTimer;
 
         QStack<FITSScale> filterStack;
 

@@ -21,6 +21,7 @@
 #include "Options.h"
 #include "skymap.h"
 
+#include <indicom.h>
 #include <QImageReader>
 #include <QStatusBar>
 
@@ -95,10 +96,10 @@ void GenericDevice::registerProperty(INDI::Property *prop)
         return;
 
     const QString name = prop->getName();
-    if (properties.contains(name))
-        return;
+    //    if (properties.contains(name))
+    //        return;
 
-    properties[name] = prop;
+    //    properties[name] = prop;
 
     emit propertyDefined(prop);
 
@@ -197,7 +198,6 @@ void GenericDevice::registerProperty(INDI::Property *prop)
 
 void GenericDevice::removeProperty(const QString &name)
 {
-    properties.remove(name);
     emit propertyDeleted(name);
 }
 
@@ -874,18 +874,12 @@ IPerm GenericDevice::getPermission(const QString &propName)
 
 INDI::Property *GenericDevice::getProperty(const QString &propName)
 {
-    for (auto &oneProp : properties)
-    {
-        if (propName == QString(oneProp->getName()))
-            return oneProp;
-    }
-
-    return nullptr;
+    return baseDevice->getProperty(propName.toLatin1().constData());
 }
 
 bool GenericDevice::setJSONProperty(const QString &propName, const QJsonArray &propElements)
 {
-    for (auto &oneProp : properties)
+    for (auto &oneProp : * (baseDevice->getProperties()))
     {
         if (propName == QString(oneProp->getName()))
         {
@@ -914,12 +908,19 @@ bool GenericDevice::setJSONProperty(const QString &propName, const QJsonArray &p
                 case INDI_NUMBER:
                 {
                     INumberVectorProperty *nvp = oneProp->getNumber();
-                    for (auto oneElement : propElements)
+                    for (const auto &oneElement : propElements)
                     {
                         QJsonObject oneElementObject = oneElement.toObject();
                         INumber *np = IUFindNumber(nvp, oneElementObject["name"].toString().toLatin1().constData());
                         if (np)
-                            np->value = oneElementObject["value"].toDouble();
+                        {
+                            double newValue = oneElementObject["value"].toDouble(std::numeric_limits<double>::quiet_NaN());
+                            if (std::isnan(newValue))
+                            {
+                                f_scansexa(oneElementObject["value"].toString().toLatin1().constData(), &newValue);
+                            }
+                            np->value = newValue;
+                        }
                     }
 
                     clientManager->sendNewNumber(nvp);
@@ -929,7 +930,7 @@ bool GenericDevice::setJSONProperty(const QString &propName, const QJsonArray &p
                 case INDI_TEXT:
                 {
                     ITextVectorProperty *tvp = oneProp->getText();
-                    for (auto oneElement : propElements)
+                    for (const auto &oneElement : propElements)
                     {
                         QJsonObject oneElementObject = oneElement.toObject();
                         IText *tp = IUFindText(tvp, oneElementObject["name"].toString().toLatin1().constData());
@@ -956,7 +957,7 @@ bool GenericDevice::setJSONProperty(const QString &propName, const QJsonArray &p
 
 bool GenericDevice::getJSONProperty(const QString &propName, QJsonObject &propObject, bool compact)
 {
-    for (auto &oneProp : properties)
+    for (auto &oneProp : * (baseDevice->getProperties()))
     {
         if (propName == QString(oneProp->getName()))
         {
@@ -1005,16 +1006,11 @@ bool GenericDevice::getJSONProperty(const QString &propName, QJsonObject &propOb
 
 bool GenericDevice::getJSONBLOB(const QString &propName, const QString &elementName, QJsonObject &blobObject)
 {
-    auto prop = std::find_if(properties.begin(), properties.end(), [propName](INDI::Property * oneProperty)
-    {
-        return (QString(oneProperty->getName()) == propName);
-    });
-
-    if (prop == properties.end())
+    auto blobProperty = baseDevice->getProperty(propName.toLatin1().constData());
+    if (blobProperty == nullptr)
         return false;
 
-    auto blobProperty = (*prop)->getBLOB();
-    IBLOB *oneBLOB = IUFindBLOB(blobProperty, elementName.toLatin1().constData());
+    IBLOB *oneBLOB = IUFindBLOB(blobProperty->getBLOB(), elementName.toLatin1().constData());
     if (!oneBLOB)
         return false;
 
@@ -1154,7 +1150,7 @@ QString DeviceDecorator::getDriverVersion()
     return interfacePtr->getDriverVersion();
 }
 
-const QHash<QString, INDI::Property *> &DeviceDecorator::getProperties()
+const Properties * DeviceDecorator::getProperties()
 {
     return interfacePtr->getProperties();
 }
